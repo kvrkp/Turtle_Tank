@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: com.pi4j:pi4j-device:0.0.5">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.pi4j/pi4j-device/0.0.5/27dcac4a0d671bec68311bff231d12e5dbd7a16c/pi4j-device-0.0.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.pi4j/pi4j-device/0.0.5/41097f0959aec4ae984600947e61343556aa7bfc/pi4j-device-0.0.5-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
