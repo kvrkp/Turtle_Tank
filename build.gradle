@@ -29,10 +29,11 @@ sourceCompatibility = 1.8
 targetCompatibility = 1.8
 
 dependencies {
-    compile('com.pi4j:pi4j-core:1.0')
-    compile('com.pi4j:pi4j-device:0.0.5')
-    compile('mysql:mysql-connector-java:5.1.38')
+    compile("com.pi4j:pi4j-core:1.0")
+    compile("com.pi4j:pi4j-device:0.0.5")
+    compile("mysql:mysql-connector-java:5.1.38")
     compile("org.springframework.boot:spring-boot-starter-thymeleaf")
+    compile("org.webjars:jquery:2.0.3-1")
 }
 
 task wrapper(type: Wrapper) {

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <title>Donnie The Turtle</title>
+    <script src="/webjars/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $("#mainLight").click(function(){
+                $.get("/relayToggle", {name: "mainLight"});
+            });
+        });
+        $(document).ready(function(){
+            $("#uvbLight").click(function(){
+                $.get("/relayToggle", {name: "uvbLight"});
+            });
+        });
+        $(document).ready(function(){
+            $("#heatLight").click(function(){
+                $.get("/relayToggle", {name: "heatLight"});
+            });
+        });
+        $(document).ready(function(){
+            $("#bubbles").click(function(){
+                $.get("/relayToggle", {name: "bubbles"});
+            });
+        });
+    </script>
+</head>
+<body>
+    <input type="button" id="mainLight" label="fn"/>
+    <input type="button" id="uvbLight" label="off"/>
+    <input type="button" id="heatLight" label="off"/>
+    <input type="button" id="bubbles" label="off"/>
+</body>
+</html>
+

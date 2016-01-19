@@ -2,12 +2,13 @@ package turtle_tank;
 
         import org.springframework.stereotype.Controller;
         import org.springframework.web.bind.annotation.RequestMapping;
+        import org.springframework.web.bind.annotation.RequestMethod;
         import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class TemperatureController {
 
-    @RequestMapping(value = "/getTemp")
+    @RequestMapping(value = "/getTemp", method = RequestMethod.GET)
     public String getTemp(@RequestParam(value="name", required = true, defaultValue = "") String name) {
         String temp;
 

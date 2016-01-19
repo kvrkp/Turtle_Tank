@@ -2,12 +2,13 @@ package turtle_tank;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class RelayController {
 
-    @RequestMapping("/relayToggle")
+    @RequestMapping(value = "/relayToggle", method = RequestMethod.GET)
     public String relayToggle(@RequestParam(value="name", required = true, defaultValue = "") String name) {
         String status;
 
@@ -41,7 +42,7 @@ public class RelayController {
         return status;
     }
 
-    @RequestMapping("/relayStatus")
+    @RequestMapping(value = "/relayStatus", method = RequestMethod.GET)
     public String relayStatus(@RequestParam(value="name", required = true, defaultValue = "") String name) {
         String status;
 
