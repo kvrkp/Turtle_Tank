@@ -59,6 +59,8 @@
     <orderEntry type="library" name="Gradle: com.pi4j:pi4j-device:0.0.5" level="project" />
     <orderEntry type="library" name="Gradle: com.pi4j:pi4j-gpio-extension:0.0.5" level="project" />
     <orderEntry type="library" name="Gradle: mysql:mysql-connector-java:5.1.38" level="project" />
-    <orderEntry type="library" name="Gradle: org.webjars:jquery:2.0.3-1" level="project" />
+    <orderEntry type="library" name="Gradle: org.webjars:bootstrap:4.0.0-alpha.2" level="project" />
+    <orderEntry type="library" name="Gradle: org.webjars:jquery:3.0.0-alpha1" level="project" />
+    <orderEntry type="library" name="Gradle: org.webjars:startbootstrap-freelancer:1.0.3" level="project" />
   </component>
 </module>

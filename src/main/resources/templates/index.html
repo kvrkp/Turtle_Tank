@@ -2,7 +2,7 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head lang="en">
     <title>Donnie The Turtle</title>
-    <script src="/webjars/jquery/2.0.3/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/jquery/3.0.0-alpha1/jquery.js"></script>
     <script type="text/javascript">
         $(document).ready(function(){
             $("#mainLight").click(function(){
@@ -24,13 +24,18 @@
                 $.get("/relayToggle", {name: "bubbles"});
             });
         });
+        $(document).ready(function(){
+            $("#feeder").click(function(){
+                $.get("/feeder");
+            });
+        });
     </script>
 </head>
 <body>
-    <input type="button" id="mainLight" label="fn"/>
-    <input type="button" id="uvbLight" label="off"/>
-    <input type="button" id="heatLight" label="off"/>
-    <input type="button" id="bubbles" label="off"/>
+<input type="button" id="mainLight" value="Main Light"/>
+<input type="button" id="uvbLight" value="UVB Light"/>
+<input type="button" id="heatLight" value="Heat Light"/>
+<input type="button" id="bubbles" value="Bubbles"/>
+<input type="button" id="feeder" value="Feeder"/>
 </body>
 </html>
-
