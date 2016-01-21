@@ -54,13 +54,13 @@
             $.get("/feederStatus", function(data){$('#feeder').val(data)});
 
             <!--get temperatures on load ** update every minute **-->
-            $.get("/getTemp", {name: "water"}, function(data){$('#waterTemp').html("<p style='font-size:125px'>" + data + "</p>")});
-            $.get("/getTemp", {name: "air"}, function(data){$('#airTemp').html("<p style='font-size:125px'>" + data + "</p>")});
-            $.get("/getTemp", {name: "basking"}, function(data){$('#baskingTemp').html("<p style='font-size:125px'>" + data + "</p>")});
+            $.get("/getTemp", {name: "water"}, function(data){$('#waterTemp').html("<p style='font-size:8em'>" + data + "</p>")});
+            $.get("/getTemp", {name: "air"}, function(data){$('#airTemp').html("<p style='font-size:8em'>" + data + "</p>")});
+            $.get("/getTemp", {name: "basking"}, function(data){$('#baskingTemp').html("<p style='font-size:8em'>" + data + "</p>")});
             setInterval(function() {
-                $.get("/getTemp", {name: "water"}, function(data){$('#waterTemp').html("<p style='font-size:125px'>" + data + "</p>")});
-                $.get("/getTemp", {name: "air"}, function(data){$('#airTemp').html("<p style='font-size:125px'>" + data + "</p>")});
-                $.get("/getTemp", {name: "basking"}, function(data){$('#baskingTemp').html("<p style='font-size:125px'>" + data + "</p>")});
+                $.get("/getTemp", {name: "water"}, function(data){$('#waterTemp').html("<p style='font-size:8em'>" + data + "</p>")});
+                $.get("/getTemp", {name: "air"}, function(data){$('#airTemp').html("<p style='font-size:8em'>" + data + "</p>")});
+                $.get("/getTemp", {name: "basking"}, function(data){$('#baskingTemp').html("<p style='font-size:8em'>" + data + "</p>")});
             }, 60000)
         });
     </script>
@@ -92,7 +92,7 @@
                         <a href="#livefeed">Live Feed</a>
                     </li>
                     <li class="page-scroll">
-                        <a href="#stats">Stats</a>
+                        <a href="#temperatures">Temperatures</a>
                     </li>
                     <li class="page-scroll">
                         <a href="#about">About</a>
@@ -130,7 +130,7 @@
                 <div class="col-lg-12 text-center">
                     <h2>Live Feed</h2>
                     <hr class="star-primary">
-                    <iframe src="http://ipcamlive.com/player/player.php?alias=turtletank&autoplay=0&mute=0" width="600px" height="400px"frameborder="0"></iframe>
+                    <iframe src="http://ipcamlive.com/player/player.php?alias=turtletank&autoplay=0&mute=0" width="800px" height="600px"frameborder="0"></iframe>
                     <br>
                         <div class="container">
                             <div class="mainLight">
@@ -160,29 +160,29 @@
         </div>
     </section>
 
-    <!-- Stats Section -->
-    <section class="success" id="stats">
+    <!-- Temperatures Section -->
+    <section class="success" id="temperatures">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h2>Stats</h2>
+                    <h2>Temperatures</h2>
                     <hr class="star-light">
                 </div>
                 <div class="col-lg-12 text-center">
                     <div class="container">
                         <div class="container">
                             <div class="water">
-                                <h2>WATER TEMP</h2>
+                                <h2>WATER</h2>
                                 <div id = "waterTemp">
                                 </div>
                             </div>
                             <div class="air">
-                                <h2>AIR TEMP</h2>
+                                <h2>AIR</h2>
                                 <div id = "airTemp">
                                 </div>
                             </div>
                             <div class="basking">
-                                <h2>BASKING TEMP</h2>
+                                <h2>BASKING</h2>
                                 <div id = "baskingTemp">
                                 </div>
                             </div>
