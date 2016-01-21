@@ -1,41 +1,293 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head lang="en">
+
     <title>Donnie The Turtle</title>
+
+    <!--bootstrap Core CSS and jQuery-->
     <script type="text/javascript" src="/webjars/jquery/3.0.0-alpha1/jquery.js"></script>
+    <link th:href="@{/css/bootstrap.css}" rel="stylesheet" media="screen" />
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
+    <link th:href="@{/css/unique.css}" rel="stylesheet" media="screen" />
+
+
+    <!--custom CSS-->
+    <link th:href="@{/css/freelancer.css}" rel="stylesheet" media="screen" />
+    <link th:href="@{/webjars/startbootstrap-freelancer/1.0.3/font-awesome/css/font-awesome.css}" rel="stylesheet" media="screen" />
+    <link th:href="@{/webjars/startbootstrap-freelancer/1.0.3/font-awesome/css/font-awesome.min.css}" rel="stylesheet" media="screen" />
+
+    <!--custom Fonts -->
+    <link href="http://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <!--jQuery Calls on load-->
     <script type="text/javascript">
         $(document).ready(function(){
+            <!--set relay toggle buttons on load-->
             $("#mainLight").click(function(){
-                $.get("/relayToggle", {name: "mainLight"});
+                $.get("/relayToggle", {name: "mainLight"}, function(data){$('#mainLight').val(data)});
             });
-        });
-        $(document).ready(function(){
             $("#uvbLight").click(function(){
-                $.get("/relayToggle", {name: "uvbLight"});
+                $.get("/relayToggle", {name: "uvbLight"}, function(data){$('#uvbLight').val(data)});
             });
-        });
-        $(document).ready(function(){
             $("#heatLight").click(function(){
-                $.get("/relayToggle", {name: "heatLight"});
+                $.get("/relayToggle", {name: "heatLight"}, function(data){$('#heatLight').val(data)});
             });
-        });
-        $(document).ready(function(){
             $("#bubbles").click(function(){
-                $.get("/relayToggle", {name: "bubbles"});
+                $.get("/relayToggle", {name: "bubbles"}, function(data){$('#bubbles').val(data)});
             });
-        });
-        $(document).ready(function(){
             $("#feeder").click(function(){
-                $.get("/feeder");
+                $.get("/feederToggle", function(data){
+                    if(data == "Feeding") {
+                        $('#feeder').val("Disabled")
+                    } else
+                        alert(data);
+                });
             });
+
+            <!--set relay toggle status on load-->
+            $.get("/relayStatus", {name: "mainLight"}, function(data){$('#mainLight').val(data)});
+            $.get("/relayStatus", {name: "uvbLight"}, function(data){$('#uvbLight').val(data)});
+            $.get("/relayStatus", {name: "heatLight"}, function(data){$('#heatLight').val(data)});
+            $.get("/relayStatus", {name: "bubbles"}, function(data){$('#bubbles').val(data)});
+            $.get("/feederStatus", function(data){$('#feeder').val(data)});
+
+            <!--get temperatures on load ** update every minute **-->
+            $.get("/getTemp", {name: "water"}, function(data){$('#waterTemp').html("<p style='font-size:125px'>" + data + "</p>")});
+            $.get("/getTemp", {name: "air"}, function(data){$('#airTemp').html("<p style='font-size:125px'>" + data + "</p>")});
+            $.get("/getTemp", {name: "basking"}, function(data){$('#baskingTemp').html("<p style='font-size:125px'>" + data + "</p>")});
+            setInterval(function() {
+                $.get("/getTemp", {name: "water"}, function(data){$('#waterTemp').html("<p style='font-size:125px'>" + data + "</p>")});
+                $.get("/getTemp", {name: "air"}, function(data){$('#airTemp').html("<p style='font-size:125px'>" + data + "</p>")});
+                $.get("/getTemp", {name: "basking"}, function(data){$('#baskingTemp').html("<p style='font-size:125px'>" + data + "</p>")});
+            }, 60000)
         });
     </script>
 </head>
-<body>
-<input type="button" id="mainLight" value="Main Light"/>
-<input type="button" id="uvbLight" value="UVB Light"/>
-<input type="button" id="heatLight" value="Heat Light"/>
-<input type="button" id="bubbles" value="Bubbles"/>
-<input type="button" id="feeder" value="Feeder"/>
+
+<body id="page-top" class="index">
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#page-top">Donnie The Turtle</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li class="hidden">
+                        <a href="#page-top"></a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#livefeed">Live Feed</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#stats">Stats</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#about">About</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#video">Video</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12">
+                    <img th:src="@{/images/turtle.png}" class="img-responsive" src="../static/images/turtle.png"/>
+                    <div class="intro-text">
+                        <span class="name">Donnie The Turtle</span>
+                        <hr class="star-light">
+                        <span class="skills">Custom - Red Ear Slider - Habitat</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Live Feed Grid Section -->
+    <section id="livefeed">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>Live Feed</h2>
+                    <hr class="star-primary">
+                    <iframe src="http://ipcamlive.com/player/player.php?alias=turtletank&autoplay=0&mute=0" width="600px" height="400px"frameborder="0"></iframe>
+                    <br>
+                        <div class="container">
+                            <div class="mainLight">
+                                <p>Main Light</p>
+                                <input type="button" id="mainLight" class="btn btn-primary btn-lg"/>
+                            </div>
+                            <div class="uvbLight">
+                                <p>UVB Light</p>
+                                <input type="button" id="uvbLight" class="btn btn-primary btn-lg"/>
+                            </div>
+                            <div class="heatLight">
+                                <p>Heat Light</p>
+                                <input type="button" id="heatLight" class="btn btn-primary btn-lg"/>
+                            </div>
+                            <div class="bubbles">
+                                <p>Bubbles</p>
+                                <input type="button" id="bubbles" class="btn btn-primary btn-lg"/>
+                            </div>
+                            <div class="feeder">
+                                <p>Feeder</p>
+                                <input type="button" id="feeder" class="btn btn-primary btn-lg"/>
+                            </div>
+                        </div>
+                    <br>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="success" id="stats">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>Stats</h2>
+                    <hr class="star-light">
+                </div>
+                <div class="col-lg-12 text-center">
+                    <div class="container">
+                        <div class="container">
+                            <div class="water">
+                                <h2>WATER TEMP</h2>
+                                <div id = "waterTemp">
+                                </div>
+                            </div>
+                            <div class="air">
+                                <h2>AIR TEMP</h2>
+                                <div id = "airTemp">
+                                </div>
+                            </div>
+                            <div class="basking">
+                                <h2>BASKING TEMP</h2>
+                                <div id = "baskingTemp">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>About</h2>
+                    <hr class="star-primary">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-lg-offset-2">
+                    <p>This web-page and backend application are both running on a single Raspberry Pi. The web-page was built
+                    using spring-boot, and the backend was built using spring & Java.</p>
+                </div>
+                <div class="col-lg-4">
+                    <p>A huge thanks to the <a href src="http://pi4j.com">Pi4J</a> library for making Java on the Raspberry Pi a possibility
+                    as well as <a href src="https://spring.io">spring</a> for your ease of use, and integration. You have made one happy turtle.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Video Section -->
+    <section class="success" id="video">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>Video</h2>
+                    <hr class="star-light">
+                </div>
+                <div class="col-lg-12 text-center">
+                    <p>Youtube Video showing the outside of the turtle tank to come.<br>For now, just watch this video I made of my Dad.</p>
+                    <iframe width="600" height="400" src="https://www.youtube.com/embed/IA6XK8nRQn0" frameborder="0" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="text-center">
+        <div class="footer-above">
+            <div class="container">
+                <div class="row">
+                    <div class="footer-col col-md-4">
+                        <h3>Chad D'Haenens</h3>
+                        <p>Donnie's Owner</p>
+                        <img th:src="@{/images/chad.png}" class="img-responsive" src="../static/images/chad.png"/>
+                    </div>
+                    <div class="footer-col col-md-4">
+                        <h3>Chad Around the Web</h3>
+                        <ul class="list-inline">
+                            <li>
+                                <a href="https://plus.google.com/u/0/114632663039234962936" class="btn-social btn-outline"><i class="fa fa-fw fa-google-plus"></i></a>
+                            </li>
+                            <li>
+                                <a href="https://twitter.com/chaderick9" class="btn-social btn-outline"><i class="fa fa-fw fa-twitter"></i></a>
+                            </li>
+                            <li>
+                                <a href="https://github.com/chaderick9" class="btn-social btn-outline"><i class="fa fa-fw fa-github"></i></a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="footer-col col-md-4">
+                        <h3>About Chad</h3>
+                        <p>I have a love for turtles,<br>coding, golf,<br>and on occasion,<br>smooth jazz.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer-below">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-12">
+                        Copyright &copy; Donnie The Turtle 2016
+                    </div>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scroll to Top Button (Only visible on small and extra-small screen sizes) -->
+    <div class="scroll-top page-scroll visible-xs visible-sm">
+        <a class="btn btn-primary" href="#page-top">
+            <i class="fa fa-chevron-up"></i>
+        </a>
+    </div>
+
+    <!--plugin JavaScript -->
+    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
+    <script th:src="@{/js/classie.js}" src="../static/js/classie.js"></script>
+    <script th:src="@{/js/cbpAnimatedHeader.js}" src="../static/js/cbpAnimatedHeader.js"></script>
+
+    <!--custom theme JavaScript -->
+    <script th:src="@{/js/freelancer.js}" src="../static/js/freelancer.js"></script>
+
 </body>
+
 </html>

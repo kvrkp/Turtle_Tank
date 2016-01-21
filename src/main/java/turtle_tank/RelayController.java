@@ -4,12 +4,14 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class RelayController {
 
     @RequestMapping(value = "/relayToggle", method = RequestMethod.GET)
-    public String relayToggle(@RequestParam(value="name", required = true, defaultValue = "") String name) {
+    @ResponseBody
+    public String relayToggle(@RequestParam(value="name", required = true) String name) {
         String status;
 
         switch(name) {
@@ -43,7 +45,8 @@ public class RelayController {
     }
 
     @RequestMapping(value = "/relayStatus", method = RequestMethod.GET)
-    public String relayStatus(@RequestParam(value="name", required = true, defaultValue = "") String name) {
+    @ResponseBody
+    public String relayStatus(@RequestParam(value="name", required = true) String name) {
         String status;
 
         switch(name) {

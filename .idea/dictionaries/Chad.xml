@@ -1,9 +1,12 @@
 <component name="ProjectDictionaryState">
   <dictionary name="Chad">
     <words>
+      <w>airtemp</w>
+      <w>baskingtemp</w>
       <w>mins</w>
       <w>raspi</w>
       <w>rsdb</w>
+      <w>watertemp</w>
     </words>
   </dictionary>
 </component>

@@ -1,28 +1,33 @@
 package turtle_tank;
 
-        import org.springframework.stereotype.Controller;
-        import org.springframework.web.bind.annotation.RequestMapping;
-        import org.springframework.web.bind.annotation.RequestMethod;
-        import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.text.DecimalFormat;
 
 @Controller
 public class TemperatureController {
 
     @RequestMapping(value = "/getTemp", method = RequestMethod.GET)
-    public String getTemp(@RequestParam(value="name", required = true, defaultValue = "") String name) {
+    @ResponseBody
+    public String getTemp(@RequestParam(value="name", required = true) String name) {
         String temp;
+        DecimalFormat df = new DecimalFormat("#.#");
 
         switch(name) {
             case "water":
-                temp = Float.toString(Temperature.getWater());
+                temp = df.format((double) (Temperature.getWater()));
                 break;
 
             case "air":
-                temp = Float.toString(Temperature.getAir());
+                temp = df.format((double) (Temperature.getAir()));
                 break;
 
             case "basking":
-                temp = Float.toString(Temperature.getBasking());
+                temp = df.format((double) (Temperature.getBasking()));
                 break;
 
             default: temp = "Fail";
