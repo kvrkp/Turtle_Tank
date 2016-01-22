@@ -1,6 +1,7 @@
 package turtle_tank;
 
 import org.springframework.stereotype.Controller;
+import org.springframework.util.comparator.BooleanComparator;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -8,37 +9,91 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class RelayController {
+    // variables to account for Donnie's sanity
+    private static volatile boolean mainLightTimeout, uvbLightTimeout, heatLightTimeout,bubblesTimeout;
+
+    // inner class for timeout
+    private class Timeout implements Runnable {
+        private volatile String a;
+
+        public Timeout(String a){
+            this.a = a;
+        }
+
+        @Override
+        public void run() {
+            switch(a) {
+                case "mainLightTimeout" : RelayController.mainLightTimeout = true;
+                    break;
+                case "uvbLightTimeout" : RelayController.uvbLightTimeout = true;
+                    break;
+                case "heatLightTimeout" : RelayController.heatLightTimeout = true;
+                    break;
+                case "bubblesTimeout" : RelayController.bubblesTimeout = true;
+                    break;
+            }
+
+            try {
+                Thread.sleep(20000); // timeout for 20 secs
+            } catch (InterruptedException e) {
+                System.err.println("Timeout Thread Interrupted");
+            }
+
+            switch(a) {
+                case "mainLightTimeout" : RelayController.mainLightTimeout = false;
+                    break;
+                case "uvbLightTimeout" : RelayController.uvbLightTimeout = false;
+                    break;
+                case "heatLightTimeout" : RelayController.heatLightTimeout = false;
+                    break;
+                case "bubblesTimeout" : RelayController.bubblesTimeout = false;
+                    break;
+            }
+        }
+    }
 
     @RequestMapping(value = "/relayToggle", method = RequestMethod.GET)
     @ResponseBody
-    public String relayToggle(@RequestParam(value="name", required = true) String name) {
+    synchronized public String relayToggle(@RequestParam(value="name", required = true) String name) {
         String status;
 
         switch(name) {
             case "mainLight":
-                GPIO.mainLight.toggle();
-                if (GPIO.mainLight.isHigh()) status = "Off";
-                else status = "On";
+                if(mainLightTimeout) status = "Timeout";                    // check to see if timeout active
+                else {                                                      // if timeout NOT active
+                    GPIO.mainLight.toggle();                                // toggle switch
+                    status = (GPIO.mainLight.isHigh()) ? "Off" : "On";      // assign status value based off of toggle status
+                    Timeout mlClass = new Timeout("mainLightTimeout");         // create instance of inner class and call start()
+                    (new Thread(mlClass)).start();                           // activate timeout for however long above
+                }
                 break;
-
             case "uvbLight":
-                GPIO.uvbLight.toggle();
-                if (GPIO.uvbLight.isHigh()) status = "Off";
-                else status = "On";
+                if(uvbLightTimeout) status = "Timeout";
+                else {
+                    GPIO.uvbLight.toggle();
+                    status = (GPIO.uvbLight.isHigh()) ? "Off" : "On";
+                    Timeout uvblClass = new Timeout("uvbLightTimeout");
+                    (new Thread(uvblClass)).start();
+                }
                 break;
-
             case "heatLight":
-                GPIO.heatLight.toggle();
-                if (GPIO.heatLight.isHigh()) status = "Off";
-                else status = "On";
+                if(heatLightTimeout) status = "Timeout";
+                else {
+                    GPIO.heatLight.toggle();
+                    status = (GPIO.heatLight.isHigh()) ? "Off" : "On";
+                    Timeout hlClass = new Timeout("heatLightTimeout");
+                    (new Thread(hlClass)).start();
+                }
                 break;
-
             case "bubbles":
-                GPIO.bubbles.toggle();
-                if (GPIO.bubbles.isHigh()) status = "Off";
-                else status = "On";
+                if(bubblesTimeout) status = "Timeout";
+                else {
+                    GPIO.bubbles.toggle();
+                    status = (GPIO.bubbles.isHigh()) ? "Off" : "On";
+                    Timeout bClass = new Timeout("bubblesTimeout");
+                    (new Thread(bClass)).start();
+                }
                 break;
-
             default: status = "Fail";
         }
         return status;
@@ -46,45 +101,31 @@ public class RelayController {
 
     @RequestMapping(value = "/relayStatus", method = RequestMethod.GET)
     @ResponseBody
-    public String relayStatus(@RequestParam(value="name", required = true) String name) {
+    synchronized public String relayStatus(@RequestParam(value="name", required = true) String name) {
         String status;
 
         switch(name) {
             case "mainLight":
-                if (GPIO.mainLight.isHigh()) status = "Off";
-                else status = "On";
+                status = (GPIO.mainLight.isHigh()) ? "Off" : "On";
                 break;
-
             case "uvbLight":
-                if (GPIO.uvbLight.isHigh()) status = "Off";
-                else status = "On";
+                status = (GPIO.uvbLight.isHigh()) ? "Off" : "On";
                 break;
-
             case "heatLight":
-                if (GPIO.heatLight.isHigh()) status = "Off";
-                else status = "On";
+                status = (GPIO.heatLight.isHigh()) ? "Off" : "On";
                 break;
-
             case "bubbles":
-                if (GPIO.bubbles.isHigh()) status = "Off";
-                else status = "On";
+                status = (GPIO.bubbles.isHigh()) ? "Off" : "On";
                 break;
-
             case "waterHeat ":
-                if (GPIO.waterHeat.isHigh()) status = "Off";
-                else status = "On";
+                status = (GPIO.waterHeat.isHigh()) ? "Off" : "On";
                 break;
-
             case "feeder ":
-                if (GPIO.feeder.isHigh()) status = "Off";
-                else status = "On";
+                status = (GPIO.feeder.isHigh()) ? "Off" : "On";
                 break;
-
             case "waterSwitch":
-                if (GPIO.waterSwitch.isHigh()) status = "Off";
-                else status = "On";
+                status = (GPIO.waterSwitch.isHigh()) ? "Off" : "On";
                 break;
-
             default: status = "Fail";
         }
         return status;

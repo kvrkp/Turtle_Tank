@@ -11,7 +11,6 @@
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
     <link th:href="@{/css/unique.css}" rel="stylesheet" media="screen" />
 
-
     <!--custom CSS-->
     <link th:href="@{/css/freelancer.css}" rel="stylesheet" media="screen" />
     <link th:href="@{/webjars/startbootstrap-freelancer/1.0.3/font-awesome/css/font-awesome.css}" rel="stylesheet" media="screen" />
@@ -26,42 +25,82 @@
         $(document).ready(function(){
             <!--set relay toggle buttons on load-->
             $("#mainLight").click(function(){
-                $.get("/relayToggle", {name: "mainLight"}, function(data){$('#mainLight').val(data)});
+                $.get("/relayToggle", {name: "mainLight"}, function(data){
+                    if(data == "Timeout"){
+                        alert("Video feed is delayed, your request occurred in real time already. Be patient!")
+                    } else
+                        $('#mainLight').val(data)
+                });
             });
-            $("#uvbLight").click(function(){
-                $.get("/relayToggle", {name: "uvbLight"}, function(data){$('#uvbLight').val(data)});
+            $("#uvbLight").click(function() {
+                $.get("/relayToggle", {name: "uvbLight"}, function (data) {
+                    if (data == "Timeout") {
+                        alert("Video feed is delayed, your request occurred in real time already. Be patient!")
+                    } else
+                        $('#uvbLight').val(data)
+                });
             });
             $("#heatLight").click(function(){
-                $.get("/relayToggle", {name: "heatLight"}, function(data){$('#heatLight').val(data)});
+                $.get("/relayToggle", {name: "heatLight"}, function(data){
+                    if(data == "Timeout"){
+                        alert("Video feed is delayed, your request occurred in real time already. Be patient!")
+                    } else
+                        $('#heatLight').val(data)
+                });
             });
             $("#bubbles").click(function(){
-                $.get("/relayToggle", {name: "bubbles"}, function(data){$('#bubbles').val(data)});
+                $.get("/relayToggle", {name: "bubbles"}, function(data){
+                    if(data == "Timeout"){
+                        alert("Video feed is delayed, your request occurred in real time already. Be patient!")
+                    } else
+                        $('#bubbles').val(data)
+                });
             });
             $("#feeder").click(function(){
                 $.get("/feederToggle", function(data){
-                    if(data == "Feeding") {
+                    if(data == "Feeding"){
                         $('#feeder').val("Disabled")
                     } else
                         alert(data);
                 });
             });
 
-            <!--set relay toggle status on load-->
+            <!--set relay toggle status on load **update every 30 secs**-->
             $.get("/relayStatus", {name: "mainLight"}, function(data){$('#mainLight').val(data)});
             $.get("/relayStatus", {name: "uvbLight"}, function(data){$('#uvbLight').val(data)});
             $.get("/relayStatus", {name: "heatLight"}, function(data){$('#heatLight').val(data)});
             $.get("/relayStatus", {name: "bubbles"}, function(data){$('#bubbles').val(data)});
             $.get("/feederStatus", function(data){$('#feeder').val(data)});
-
-            <!--get temperatures on load ** update every minute **-->
-            $.get("/getTemp", {name: "water"}, function(data){$('#waterTemp').html("<p style='font-size:8em'>" + data + "</p>")});
-            $.get("/getTemp", {name: "air"}, function(data){$('#airTemp').html("<p style='font-size:8em'>" + data + "</p>")});
-            $.get("/getTemp", {name: "basking"}, function(data){$('#baskingTemp').html("<p style='font-size:8em'>" + data + "</p>")});
             setInterval(function() {
-                $.get("/getTemp", {name: "water"}, function(data){$('#waterTemp').html("<p style='font-size:8em'>" + data + "</p>")});
-                $.get("/getTemp", {name: "air"}, function(data){$('#airTemp').html("<p style='font-size:8em'>" + data + "</p>")});
-                $.get("/getTemp", {name: "basking"}, function(data){$('#baskingTemp').html("<p style='font-size:8em'>" + data + "</p>")});
-            }, 60000)
+                $.get("/relayStatus", {name: "mainLight"}, function(data){$('#mainLight').val(data)});
+                $.get("/relayStatus", {name: "uvbLight"}, function(data){$('#uvbLight').val(data)});
+                $.get("/relayStatus", {name: "heatLight"}, function(data){$('#heatLight').val(data)});
+                $.get("/relayStatus", {name: "bubbles"}, function(data){$('#bubbles').val(data)});
+                $.get("/feederStatus", function(data){$('#feeder').val(data)});
+            }, 30000);
+
+            <!--get temperatures on load **update every minute**-->
+            $.get("/getTemp", {name: "water"}, function(data){$('#waterTemp').html("<p class='temperature'>" + data + "</p>")});
+            $.get("/getTemp", {name: "air"}, function(data){$('#airTemp').html("<p class='temperature'>" + data + "</p>")});
+            $.get("/getTemp", {name: "basking"}, function(data){$('#baskingTemp').html("<p class='temperature'>" + data + "</p>")});
+            setInterval(function() {
+                $.get("/getTemp", {name: "water"}, function(data){$('#waterTemp').html("<p class='temperature'>" + data + "</p>")});
+                $.get("/getTemp", {name: "air"}, function(data){$('#airTemp').html("<p class='temperature'>" + data + "</p>")});
+                $.get("/getTemp", {name: "basking"}, function(data){$('#baskingTemp').html("<p class='temperature'>" + data + "</p>")});
+            }, 60000);
+
+            <!--get routine on load-->
+            $.get("/getRoutine", {name: "sunrise"}, function(data){$('#sunrise').html("<p class='routine'>" + data + "</p>")});
+            $.get("/getRoutine", {name: "breakfast"}, function(data){$('#breakfast').html("<p class='routine'>" + data + "</p>")});
+            $.get("/getRoutine", {name: "dinner"}, function(data){$('#dinner').html("<p class='routine'>" + data + "</p>")});
+            $.get("/getRoutine", {name: "sunset"}, function(data){$('#sunset').html("<p class='routine'>" + data + "</p>")});
+
+            <!--determine css of LIVE FEED background-->
+            $.get("/getRoutine", {name: "nightTimeBool"}, function(data){
+                if(data == "true"){
+                    $('#livefeed').css('background-color','Black');
+                }
+            });
         });
     </script>
 </head>
@@ -93,6 +132,9 @@
                     </li>
                     <li class="page-scroll">
                         <a href="#temperatures">Temperatures</a>
+                    </li>
+                    <li class="page-scroll">
+                        <a href="#routine">Routine</a>
                     </li>
                     <li class="page-scroll">
                         <a href="#about">About</a>
@@ -170,21 +212,55 @@
                 </div>
                 <div class="col-lg-12 text-center">
                     <div class="container">
-                        <div class="container">
-                            <div class="water">
-                                <h2>WATER</h2>
-                                <div id = "waterTemp">
-                                </div>
+                        <div class="water">
+                            <p class="activity">WATER</p>
+                            <div id = "waterTemp">
                             </div>
-                            <div class="air">
-                                <h2>AIR</h2>
-                                <div id = "airTemp">
-                                </div>
+                        </div>
+                        <div class="air">
+                            <p class="activity">AIR</p>
+                            <div id = "airTemp">
                             </div>
-                            <div class="basking">
-                                <h2>BASKING</h2>
-                                <div id = "baskingTemp">
-                                </div>
+                        </div>
+                        <div class="basking">
+                            <p class="activity">BASKING</p>
+                            <div id = "baskingTemp">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Routine Section -->
+    <section id="routine">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-12 text-center">
+                    <h2>Routine</h2>
+                    <hr class="star-primary">
+                </div>
+                <div class="col-lg-12 text-center">
+                    <div class="container">
+                        <div class="sunrise">
+                            <p class="activity">SUNRISE</p>
+                            <div id = "sunrise">
+                            </div>
+                        </div>
+                        <div class="breakfast">
+                            <p class="activity">BREAKFAST</p>
+                            <div id = "breakfast">
+                            </div>
+                        </div>
+                        <div class="dinner">
+                            <p class="activity">DINNER</p>
+                            <div id = "dinner">
+                            </div>
+                        </div>
+                        <div class="sunset">
+                            <p class="activity">SUNSET</p>
+                            <div id = "sunset">
                             </div>
                         </div>
                     </div>
@@ -194,12 +270,12 @@
     </section>
 
     <!-- About Section -->
-    <section id="about">
+    <section class="success" id="about">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h2>About</h2>
-                    <hr class="star-primary">
+                    <hr class="star-light">
                 </div>
             </div>
             <div class="row">
@@ -216,12 +292,12 @@
     </section>
 
     <!-- Video Section -->
-    <section class="success" id="video">
+    <section id="video">
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h2>Video</h2>
-                    <hr class="star-light">
+                    <hr class="star-primary">
                 </div>
                 <div class="col-lg-12 text-center">
                     <p>Youtube Video showing the outside of the turtle tank to come.<br>For now, just watch this video I made of my Dad.</p>
@@ -252,6 +328,9 @@
                             </li>
                             <li>
                                 <a href="https://github.com/chaderick9" class="btn-social btn-outline"><i class="fa fa-fw fa-github"></i></a>
+                            </li>
+                            <li>
+                                <a href="https://www.linkedin.com/in/chad-d-haenens-124407b6" class="btn-social btn-outline"><i class="fa fa-fw fa-linkedin"></i></a>
                             </li>
                         </ul>
                     </div>

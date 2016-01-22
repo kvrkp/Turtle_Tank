@@ -15,23 +15,22 @@ public class TemperatureController {
     @ResponseBody
     public String getTemp(@RequestParam(value="name", required = true) String name) {
         String temp;
-        DecimalFormat df = new DecimalFormat("#.#");
 
         switch(name) {
             case "water":
-                temp = df.format((double) (Temperature.getWater()));
+                temp = Integer.toString((int) Temperature.getWater());
                 break;
 
             case "air":
-                temp = df.format((double) (Temperature.getAir()));
+                temp = Integer.toString((int) Temperature.getAir());
                 break;
 
             case "basking":
-                temp = df.format((double) (Temperature.getBasking()));
+                temp = Integer.toString((int) Temperature.getBasking());
                 break;
 
             default: temp = "Fail";
         }
-        return temp;
+        return temp + "\u00b0";
     }
 }

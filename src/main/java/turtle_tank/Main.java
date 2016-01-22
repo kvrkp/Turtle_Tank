@@ -26,8 +26,16 @@ public class Main {
         // create TmpDB object. This will log temperatures to database every minute
         TmpDB tmpDB = new TmpDB();
 
-        // create SunRSDB object. This will log sunrise, sunset, breakfast, dinner to database once a day
+        // create SunRSDB object. This will log sunrise, sunset, breakfast, dinner to database once a day and at startup
         SunRSDB sunRSDB = new SunRSDB();
+
+        // update sunrise, sunset, breakfast, dinner
+        sunRSDB.setSunRSDB_Values(Integer.toString(sunriseHour) + ":" + leadingZero(sunriseMinute) + " am",
+                Integer.toString(sunsetHour - 12) + ":" + leadingZero(sunsetMinute) + " pm",
+                Integer.toString(breakfastHour) + ":" + leadingZero(breakfastMinute) + " am",
+                Integer.toString(dinnerHour - 12) + ":" + leadingZero(dinnerMinute) + " pm");
+
+        (new Thread(sunRSDB)).start();                                  // update SunRSDB database
 
         (new Thread(temperature)).start();                              // start Temperature thread, updated every 5 seconds
 
@@ -98,6 +106,7 @@ public class Main {
                 GPIO.uvbLight.low();
                 GPIO.bubbles.low();
                 System.out.println(hour + ":" + leadingZero(minute) + "\tLights on");
+                SunRSDB.setNightimeBool("false");
             }
 
             // turtle tank not active @ Sunset
@@ -106,6 +115,7 @@ public class Main {
                 GPIO.uvbLight.high();
                 GPIO.bubbles.high();
                 System.out.println(hour + ":" + leadingZero(minute) + "\tLights off");
+                SunRSDB.setNightimeBool("true");
             }
 
             // log temps every minute to database

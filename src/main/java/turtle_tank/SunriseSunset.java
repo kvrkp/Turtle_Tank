@@ -11,7 +11,7 @@ import java.time.LocalDate;
 public class SunriseSunset {
 
     // instance variables
-    private int sunRiseMinute, sunRiseHour, sunSetMinute, sunSetHour;
+    static private int sunRiseMinute, sunRiseHour, sunSetMinute, sunSetHour;
 
     // constructor sets instance variables
     SunriseSunset() {
@@ -65,19 +65,19 @@ public class SunriseSunset {
         }
     }
 
-    int getSunRiseHour() {
+    static int getSunRiseHour() {
         return sunRiseHour;
     }
 
-    int getSunRiseMinute() {
+    static int getSunRiseMinute() {
         return sunRiseMinute;
     }
 
-    int getSunSetHour() {
+    static int getSunSetHour() {
         return sunSetHour + 12;
     }
 
-    int getSunSetMinute() {
+    static int getSunSetMinute() {
         return sunSetMinute;
     }
 }
