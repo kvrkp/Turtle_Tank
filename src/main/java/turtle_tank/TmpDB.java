@@ -15,8 +15,8 @@ public class TmpDB implements Runnable {
     @Override
     public void run() {
         String temp = "jdbc:mysql://localhost:3306/TurtleTank";
-        String user = "chaderick9";
-        String password = "DHaenens09!";
+        String user = "*********";
+        String password = "*********";
 
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
