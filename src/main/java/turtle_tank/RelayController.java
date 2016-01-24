@@ -34,7 +34,7 @@ public class RelayController {
             }
 
             try {
-                Thread.sleep(20000); // timeout for 20 secs
+                Thread.sleep(25000); // timeout for 25 secs
             } catch (InterruptedException e) {
                 System.err.println("Timeout Thread Interrupted");
             }
@@ -57,44 +57,48 @@ public class RelayController {
     synchronized public String relayToggle(@RequestParam(value="name", required = true) String name) {
         String status;
 
-        switch(name) {
-            case "mainLight":
-                if(mainLightTimeout) status = "Timeout";                    // check to see if timeout active
-                else {                                                      // if timeout NOT active
-                    GPIO.mainLight.toggle();                                // toggle switch
-                    status = (GPIO.mainLight.isHigh()) ? "Off" : "On";      // assign status value based off of toggle status
-                    Timeout mlClass = new Timeout("mainLightTimeout");         // create instance of inner class and call start()
-                    (new Thread(mlClass)).start();                           // activate timeout for however long above
-                }
-                break;
-            case "uvbLight":
-                if(uvbLightTimeout) status = "Timeout";
-                else {
-                    GPIO.uvbLight.toggle();
-                    status = (GPIO.uvbLight.isHigh()) ? "Off" : "On";
-                    Timeout uvblClass = new Timeout("uvbLightTimeout");
-                    (new Thread(uvblClass)).start();
-                }
-                break;
-            case "heatLight":
-                if(heatLightTimeout) status = "Timeout";
-                else {
-                    GPIO.heatLight.toggle();
-                    status = (GPIO.heatLight.isHigh()) ? "Off" : "On";
-                    Timeout hlClass = new Timeout("heatLightTimeout");
-                    (new Thread(hlClass)).start();
-                }
-                break;
-            case "bubbles":
-                if(bubblesTimeout) status = "Timeout";
-                else {
-                    GPIO.bubbles.toggle();
-                    status = (GPIO.bubbles.isHigh()) ? "Off" : "On";
-                    Timeout bClass = new Timeout("bubblesTimeout");
-                    (new Thread(bClass)).start();
-                }
-                break;
-            default: status = "Fail";
+        if(SunRSDB.getNighttimeBool()) status = "NightTime";                        // check if nighttime, if so status = nighttime
+        else {
+            switch (name) {
+                case "mainLight":
+                    if (mainLightTimeout) status = "Timeout";                       // check to see if timeout active
+                    else {                                                          // if timeout NOT active
+                        GPIO.mainLight.toggle();                                    // toggle switch
+                        status = (GPIO.mainLight.isHigh()) ? "Off" : "On";          // assign status value based off of toggle status
+                        Timeout mlClass = new Timeout("mainLightTimeout");          // create instance of inner class and call start()
+                        (new Thread(mlClass)).start();                              // activate timeout for however long above
+                    }
+                    break;
+                case "uvbLight":
+                    if (uvbLightTimeout) status = "Timeout";
+                    else {
+                        GPIO.uvbLight.toggle();
+                        status = (GPIO.uvbLight.isHigh()) ? "Off" : "On";
+                        Timeout uvblClass = new Timeout("uvbLightTimeout");
+                        (new Thread(uvblClass)).start();
+                    }
+                    break;
+                case "heatLight":
+                    if (heatLightTimeout) status = "Timeout";
+                    else {
+                        GPIO.heatLight.toggle();
+                        status = (GPIO.heatLight.isHigh()) ? "Off" : "On";
+                        Timeout hlClass = new Timeout("heatLightTimeout");
+                        (new Thread(hlClass)).start();
+                    }
+                    break;
+                case "bubbles":
+                    if (bubblesTimeout) status = "Timeout";
+                    else {
+                        GPIO.bubbles.toggle();
+                        status = (GPIO.bubbles.isHigh()) ? "Off" : "On";
+                        Timeout bClass = new Timeout("bubblesTimeout");
+                        (new Thread(bClass)).start();
+                    }
+                    break;
+                default:
+                    status = "Fail";
+            }
         }
         return status;
     }

@@ -65,5 +65,7 @@
     <orderEntry type="library" name="Gradle: xerces:xercesImpl:2.11.0" level="project" />
     <orderEntry type="library" name="Gradle: xml-apis:xml-apis:1.4.01" level="project" />
     <orderEntry type="library" name="Gradle: org.webjars:startbootstrap-freelancer:1.0.3" level="project" />
+    <orderEntry type="library" name="Gradle: org.twitter4j:twitter4j-stream:4.0.4" level="project" />
+    <orderEntry type="library" name="Gradle: org.twitter4j:twitter4j-core:4.0.4" level="project" />
   </component>
 </module>

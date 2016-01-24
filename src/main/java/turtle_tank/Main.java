@@ -8,6 +8,8 @@ import java.time.LocalTime;
 import com.pi4j.component.motor.impl.GpioStepperMotorComponent;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
 
 @SpringBootApplication
 public class Main {
@@ -84,11 +86,13 @@ public class Main {
             GPIO.mainLight.low();
             GPIO.uvbLight.low();
             GPIO.bubbles.low();
+            SunRSDB.setNightimeBool("false");
             System.out.println(curTime.getHour() + ":" + leadingZero(curTime.getMinute()) + "\tDefault Lights on");
         } else {
             GPIO.mainLight.high();
             GPIO.uvbLight.high();
             GPIO.bubbles.high();
+            SunRSDB.setNightimeBool("true");
             System.out.println(curTime.getHour() + ":" + leadingZero(curTime.getMinute()) + "\tDefault Lights off");
         }
 
@@ -105,8 +109,12 @@ public class Main {
                 GPIO.mainLight.low();
                 GPIO.uvbLight.low();
                 GPIO.bubbles.low();
-                System.out.println(hour + ":" + leadingZero(minute) + "\tLights on");
                 SunRSDB.setNightimeBool("false");
+                try {                                                   // post today's routine to Donnie's many followers
+                    TwitterPost.postTodaysRoutine();
+                } catch (TwitterException e) {
+                    e.printStackTrace();
+                }
             }
 
             // turtle tank not active @ Sunset
@@ -114,7 +122,6 @@ public class Main {
                 GPIO.mainLight.high();
                 GPIO.uvbLight.high();
                 GPIO.bubbles.high();
-                System.out.println(hour + ":" + leadingZero(minute) + "\tLights off");
                 SunRSDB.setNightimeBool("true");
             }
 

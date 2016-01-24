@@ -37,6 +37,7 @@ dependencies {
     compile("org.webjars:bootstrap:4.0.0-alpha.2")
     compile("net.sourceforge.nekohtml:nekohtml:1.9.22")
     compile("org.webjars:startbootstrap-freelancer:1.0.3")
+    compile('org.twitter4j:twitter4j-stream:4.0.4')
 }
 
 task wrapper(type: Wrapper) {
