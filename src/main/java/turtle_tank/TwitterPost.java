@@ -19,14 +19,18 @@ public class TwitterPost {
     }
 
     static public void postSnacks() throws TwitterException {
-        snacksCount = (snacksCount != 5) ? snacksCount++ : 0;
+        snacksCount = (snacksCount != 9) ? snacksCount++ : 0;
 
-        String[] snacks = {"#Loveit when I get some #attention!\nThanks for the food!",
-                "Sure is #awesome when that food falls from the sky!",
-                "#NomNomNom...",
-                "#Glorious day! #foodporn",
+        String[] snacks = {"#Loveit when I get some #attention!\nThanks 4 the food!",
+                "Sure is #awesome when that food falls from the sky! Thanks",
+                "#NomNomNom... Thanks 4 the food!",
+                "#Glorious day! My kind of #FoodPorn Thank you!",
                 "You've got to tell me this turtle pellet #recipe, it's the best!",
-                "#Yummy! #PrayForPellets"};
+                "#Yummy! #PrayForPellets Thank you",
+                "Give it to me! #SoGood! Thanks",
+                "This isn't #pizza, but I will take it! Thanks!",
+                "Good thing this shell hides my figure. Thanks 4 the food!",
+                "#Enabler... #HappyTurtle #RedEaredSlider"};
 
         String message = snacks[snacksCount] + "\n\n#turtle #IoT #RaspberryPi goo.gl/U1kYa7";
 
