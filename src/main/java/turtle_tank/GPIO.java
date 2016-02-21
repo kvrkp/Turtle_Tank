@@ -20,6 +20,7 @@ public class GPIO {
     // provision gpio pin #0 as an input pin with its internal pull down resistor enabled -- light on/off button
     final static GpioPinDigitalInput buttonLights = gpio.provisionDigitalInputPin(RaspiPin.GPIO_00, PinPullResistance.PULL_DOWN);
     final static GpioPinDigitalInput buttonFloat = gpio.provisionDigitalInputPin(RaspiPin.GPIO_01, PinPullResistance.PULL_DOWN);
+    final static GpioPinDigitalInput buttonMotionDock = gpio.provisionDigitalInputPin(RaspiPin.GPIO_02, PinPullResistance.PULL_DOWN);
 
     // provision gpio pins #3,#4,#5,#6 as output pins, set defaults -- stepper motor/feeder
     final static GpioPinDigitalOutput[] pins = {gpio.provisionDigitalOutputPin(RaspiPin.GPIO_06, PinState.LOW),

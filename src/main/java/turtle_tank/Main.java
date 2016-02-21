@@ -11,6 +11,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 
+import javax.print.Doc;
+
 @SpringBootApplication
 public class Main {
     public static void main(String[] args) throws InterruptedException {
@@ -19,9 +21,10 @@ public class Main {
 
         LocalTime curTime;                                              // create LocalTime object
 
-        // set defaults sunrise/sunset, breakfast time, dinner time
-        int hour, minute, second, sunriseHour = 7, sunsetHour = 20, sunriseMinute = 0, sunsetMinute = 0;
-        int breakfastHour = 7, breakfastMinute = 5, dinnerHour = 19, dinnerMinute = 30;
+        // local variables
+        boolean firstBoot = true;
+        int hour, minute, second, sunriseHour = 0, sunsetHour = 0, sunriseMinute = 0, sunsetMinute = 0;
+        int breakfastHour = 0, breakfastMinute = 0, dinnerHour = 0, dinnerMinute = 0;
 
         Temperature temperature = new Temperature();                    // create Temperature object
 
@@ -30,14 +33,6 @@ public class Main {
 
         // create SunRSDB object. This will log sunrise, sunset, breakfast, dinner to database once a day and at startup
         SunRSDB sunRSDB = new SunRSDB();
-
-        // update sunrise, sunset, breakfast, dinner
-        sunRSDB.setSunRSDB_Values(Integer.toString(sunriseHour) + ":" + leadingZero(sunriseMinute) + " am",
-                Integer.toString(sunsetHour - 12) + ":" + leadingZero(sunsetMinute) + " pm",
-                Integer.toString(breakfastHour) + ":" + leadingZero(breakfastMinute) + " am",
-                Integer.toString(dinnerHour - 12) + ":" + leadingZero(dinnerMinute) + " pm");
-
-        (new Thread(sunRSDB)).start();                                  // update SunRSDB database
 
         (new Thread(temperature)).start();                              // start Temperature thread, updated every 5 seconds
 
@@ -74,27 +69,17 @@ public class Main {
             }
         });
 
-        // define stepper parameters -- stepper motor/feeder
-        GPIO.motor.setStepsPerRevolution(2038);
-        GPIO.motor.setStepSequence(GPIO.sequence);
-        GPIO.motor.setStepInterval(1);
-
-        // check current time to determine turtle tank state
-        // turtle tank is active between 7am - 8pm by default
-        curTime = LocalTime.now();
-        if(curTime.getHour() >= sunriseHour && curTime.getHour() < sunsetHour) {
-            GPIO.mainLight.low();
-            GPIO.uvbLight.low();
-            GPIO.bubbles.low();
-            SunRSDB.setNightimeBool("false");
-            System.out.println(curTime.getHour() + ":" + leadingZero(curTime.getMinute()) + "\tDefault Lights on");
-        } else {
-            GPIO.mainLight.high();
-            GPIO.uvbLight.high();
-            GPIO.bubbles.high();
-            SunRSDB.setNightimeBool("true");
-            System.out.println(curTime.getHour() + ":" + leadingZero(curTime.getMinute()) + "\tDefault Lights off");
-        }
+        // create and register gpio pin listener -- motionDock on/off button
+        GPIO.buttonMotionDock.addListener(new GpioPinListenerDigital() {
+            @Override
+            public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
+                if(event.getState() == PinState.HIGH) {                                             // if circuit complete motion on dock
+                    DockController.setOutOfWater(true);                                             // set to true right away
+                } else {
+                    DockController.setOutOfWater(false);
+                }
+            }
+        });
 
         // ***** begin main program loop -- events triggered by time ***** //
         while(true) {
@@ -104,16 +89,66 @@ public class Main {
             minute = curTime.getMinute();
             second = curTime.getSecond();
 
+            // update sunrise sunset at 00:09am, and update breakfast, and dinner time. Or on first boot
+            if((hour == 0 && minute == 9 && second == 15) || (firstBoot == true)) {
+                // create sunriseSunset object
+                SunriseSunset sunriseSunset = new SunriseSunset();
+
+                DockController.setOutOfWater(true);
+
+                // initialize local variables
+                sunriseHour = sunriseSunset.getSunRiseHour();
+                sunriseMinute = sunriseSunset.getSunRiseMinute();
+                sunsetHour = sunriseSunset.getSunSetHour();
+                sunsetMinute = sunriseSunset.getSunSetMinute();
+                System.out.println(hour + ":" + leadingZero(minute) + "\tSunrise, Sunset updated\n\tSunrise: " + sunriseHour + ":" +
+                        leadingZero(sunriseMinute) + "am" + "\n\tSunset: " + (sunsetHour - 12) + ":" + leadingZero(sunsetMinute) + "pm");
+
+                // set sunriseSunset object to null and allow for garbage collection
+                sunriseSunset = null;
+
+                // first boot determine turtle tanks state
+                if(firstBoot) {
+                    if(hour <= sunsetHour && hour >= sunriseHour) {
+                        GPIO.mainLight.low();
+                        GPIO.uvbLight.low();
+                        GPIO.bubbles.low();
+                        SunRSDB.setNightimeBool(false);
+                    } else {
+                        GPIO.mainLight.high();
+                        GPIO.uvbLight.high();
+                        GPIO.bubbles.high();
+                        SunRSDB.setNightimeBool(true);
+                    }
+                    firstBoot = false;
+                }
+
+                // update breakfast, and dinner time
+                breakfastHour = getBreakfastHour(sunriseHour, sunriseMinute);
+                breakfastMinute = getBreakfastMin(sunriseMinute);
+                dinnerHour = getDinnerHour(sunsetHour, sunsetMinute);
+                dinnerMinute = getDinnerMin(sunsetMinute);
+
+                // update sunrise, sunset, breakfast, dinner values within SunRSDB object
+                sunRSDB.setSunRSDB_Values(Integer.toString(sunriseHour) + ":" + leadingZero(sunriseMinute) + " am",
+                        Integer.toString(sunsetHour - 12) + ":" + leadingZero(sunsetMinute) + " pm",
+                        Integer.toString(breakfastHour) + ":" + leadingZero(breakfastMinute) + " am",
+                        Integer.toString(dinnerHour - 12) + ":" + leadingZero(dinnerMinute) + " pm");
+
+                // update SunRSDB database
+                (new Thread(sunRSDB)).start();
+            }
+
             // turtle tank active @ Sunrise
             if(hour == sunriseHour && minute == sunriseMinute && second == 0) {
                 GPIO.mainLight.low();
                 GPIO.uvbLight.low();
                 GPIO.bubbles.low();
-                SunRSDB.setNightimeBool("false");
+                SunRSDB.setNightimeBool(false);
                 try {                                                   // post today's routine to Donnie's many followers
                     TwitterPost.postTodaysRoutine();
                 } catch (TwitterException e) {
-                    e.printStackTrace();
+                    System.err.println("Twitter: today's routine not posted");
                 }
             }
 
@@ -122,7 +157,8 @@ public class Main {
                 GPIO.mainLight.high();
                 GPIO.uvbLight.high();
                 GPIO.bubbles.high();
-                SunRSDB.setNightimeBool("true");
+                SunRSDB.setNightimeBool(true);
+                FeederController.setDailyFeedTotal(0);
             }
 
             // log temps every minute to database
@@ -141,54 +177,22 @@ public class Main {
                 else if(temperature.getAir() < temperature.getTooHotNight() && GPIO.heatLight.getState() == PinState.HIGH) GPIO.heatLight.low();
             }
 
-            // maintain water temp of 78 degrees, check every 10 sec
+            // maintain water temp of 76 degrees, check every 10 sec
             if(second % 10 == 0) {
                 if(temperature.getWater() > temperature.getTooHotWater() && GPIO.waterHeat.getState() == PinState.LOW) GPIO.waterHeat.high();
                 else if(temperature.getWater() < temperature.getTooHotWater() && GPIO.waterHeat.getState() == PinState.HIGH) GPIO.waterHeat.low();
             }
 
-            // feed turtle 5 mins after sunrise, 30 mins prior to sunset
-            if((hour == breakfastHour && minute == breakfastMinute && second == 0) || (hour == dinnerHour && minute == dinnerMinute && second == 0)) {
-                System.out.println(hour + ":" + leadingZero(minute) + "\tFeeding Time");
-                GPIO.motor.rotate(-2);
+            // feed turtle 5 mins after sunrise,
+            if(hour == breakfastHour && minute == breakfastMinute && second == 0) {
+                System.out.println(FeederController.feederToggle(""));
             }
 
-            // feed turtle again for lunch
-            if((hour == 12 && minute == 0 && second == 0)) {
-                System.out.println(hour + ":" + leadingZero(minute) + "\tFeeding Time");
-                GPIO.motor.rotate(-2);
-            }
-
-            // update sunrise sunset at 00:09am, and update breakfast, and dinner time
-            if(hour == 0 && minute == 9 && second == 15) {
-                // create sunriseSunset object
-                SunriseSunset sunriseSunset = new SunriseSunset();
-
-                // initialize local variables
-                sunriseHour = sunriseSunset.getSunRiseHour();
-                sunriseMinute = sunriseSunset.getSunRiseMinute();
-                sunsetHour = sunriseSunset.getSunSetHour();
-                sunsetMinute = sunriseSunset.getSunSetMinute();
-                System.out.println(hour + ":" + leadingZero(minute) + "\tSunrise, Sunset updated\n\tSunrise: " + sunriseHour + ":" +
-                        leadingZero(sunriseMinute) + "am" + "\n\tSunset: " + (sunsetHour - 12) + ":" + leadingZero(sunsetMinute) + "pm");
-
-                // set sunriseSunset object to null and allow for garbage collection
-                sunriseSunset = null;
-
-                // update breakfast, and dinner time
-                breakfastHour = getBreakfastHour(sunriseHour, sunriseMinute);
-                breakfastMinute = getBreakfastMin(sunriseMinute);
-                dinnerHour = getDinnerHour(sunsetHour, sunsetMinute);
-                dinnerMinute = getDinnerMin(sunsetMinute);
-
-                // update sunrise, sunset, breakfast, dinner values within SunRSDB object
-                sunRSDB.setSunRSDB_Values(Integer.toString(sunriseHour) + ":" + leadingZero(sunriseMinute) + " am",
-                        Integer.toString(sunsetHour - 12) + ":" + leadingZero(sunsetMinute) + " pm",
-                        Integer.toString(breakfastHour) + ":" + leadingZero(breakfastMinute) + " am",
-                        Integer.toString(dinnerHour - 12) + ":" + leadingZero(dinnerMinute) + " pm");
-
-                // update SunRSDB database
-                (new Thread(sunRSDB)).start();
+            // feed turtle 30 mins prior to sunset
+            if(hour == dinnerHour && minute == dinnerMinute && second == 0) {
+                if(!FeederController.overFed()) {
+                    System.out.println(FeederController.feederToggle(""));
+                }
             }
 
             // sleep main for one sec

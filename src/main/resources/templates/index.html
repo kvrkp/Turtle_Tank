@@ -10,6 +10,8 @@
     <link th:href="@{/css/bootstrap.css}" rel="stylesheet" media="screen" />
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" media="screen" />
     <link th:href="@{/css/unique.css}" rel="stylesheet" media="screen" />
+    <script th:src="@{/js/jquery.min.js}" src="../static/js/jquery.min.js"></script>
+    <script th:src="@{/js/bootstrap.min.js}" src="../static/js/bootstrap.min.js"></script>
 
     <!-- custom CSS -->
     <link th:href="@{/css/freelancer.css}" rel="stylesheet" media="screen" />
@@ -23,47 +25,79 @@
     <!-- jQuery Calls on load -->
     <script type="text/javascript">
         $(document).ready(function(){
+            <!-- testing zone wear hardhats -->
+
+
             <!-- set relay toggle buttons on load -->
             $("#mainLight").click(function(){
-                $.get("/relayToggle", {name: "mainLight"}, function(data) {
-                    if (data == "Timeout") {
-                        alert("Video feed is delayed, your request occurred in real time already. Be patient!")
-                    } else if (data == "NightTime") alert("Let the turtle sleep");
-                    else $('#mainLight').val(data);
+                $.get("/relayToggle", {name: "mainLight", password: sessionStorage.getItem('password')}, function(data){
+                    switch(data) {
+                        case "NightTime":{$("#mainLight").popover({title:"Donnie Is Sleeping", content:"Try again after Sunrise.", trigger:"hover", placement:"bottom"});break;}
+                        case "Timeout": break;
+                        default: {
+                            $("#mainLight").val(data).popover({title:"Video Feed Is Delayed", content:"Your request occurred in real time already. Be patient!", trigger:"hover", placement:"bottom"
+                            }).delay(25000).queue(function() {
+                                $(this).popover('destroy'); $(this).dequeue();
+                            });
+                        }
+                    }
                 });
             });
             $("#uvbLight").click(function() {
-                $.get("/relayToggle", {name: "uvbLight"}, function (data) {
-                    if (data == "Timeout") {
-                        alert("Video feed is delayed, your request occurred in real time already. Be patient!")
-                    } else if (data == "NightTime") alert("Let the turtle sleep");
-                    else $('#uvbLight').val(data)
+                $.get("/relayToggle", {name: "uvbLight", password: sessionStorage.getItem('password')}, function (data){
+                    switch(data) {
+                        case "NightTime": {$("#uvbLight").popover({title:"Donnie Is Sleeping", content:"Try again after Sunrise.", trigger:"hover", placement:"bottom"});break;}
+                        case "Timeout": break;
+                        default: {
+                            $("#uvbLight").val(data).popover({title:"Video Feed Is Delayed", content:"Your request occurred in real time already. Be patient!", trigger:"hover", placement:"bottom"
+                            }).delay(25000).queue(function() {
+                                $(this).popover('destroy'); $(this).dequeue();
+                            });
+                        }
+                    }
                 });
             });
             $("#heatLight").click(function(){
-                $.get("/relayToggle", {name: "heatLight"}, function(data){
-                    if(data == "Timeout"){
-                        alert("Video feed is delayed, your request occurred in real time already. Be patient!")
-                    } else if (data == "NightTime") alert("Let the turtle sleep");
-                    else $('#heatLight').val(data)
+                $.get("/relayToggle", {name: "heatLight", password: sessionStorage.getItem('password')}, function(data){
+                    switch(data) {
+                        case "NightTime": {$("#heatLight").popover({title:"Donnie Is Sleeping", content:"Try again after Sunrise.", trigger:"hover", placement:"bottom"});break;}
+                        case "Timeout": break;
+                        default: {
+                            $("#heatLight").val(data).popover({title:"Video Feed Is Delayed", content:"Your request occurred in real time already. Be patient!", trigger:"hover", placement:"bottom"
+                            }).delay(25000).queue(function() {
+                                $(this).popover('destroy'); $(this).dequeue();
+                            });
+                        }
+                    }
                 });
             });
             $("#bubbles").click(function(){
-                $.get("/relayToggle", {name: "bubbles"}, function(data){
-                    if(data == "Timeout"){
-                        alert("Video feed is delayed, your request occurred in real time already. Be patient!")
-                    } else if (data == "NightTime") alert("Let the turtle sleep");
-                    else $('#bubbles').val(data)
+                $.get("/relayToggle", {name: "bubbles", password: sessionStorage.getItem('password')}, function(data){
+                    switch(data) {
+                        case "NightTime": {$("#bubbles").popover({title:"Donnie Is Sleeping",content:"Try again after Sunrise.",trigger:"hover",placement:"bottom"});break;}
+                        case "Timeout": break;
+                        default: {
+                            $("#bubbles").val(data).popover({title:"Video Feed Is Delayed",content:"Your request occurred in real time already. Be patient!",trigger:"hover",placement:"bottom"
+                            }).delay(25000).queue(function() {
+                                $(this).popover('destroy'); $(this).dequeue();
+                            });
+                        }
+                    }
                 });
             });
             $("#feeder").click(function(){
-                $.get("/feederToggle", function(data){
-                    if(data == "NightTime"){
-                        $('#feeder').val("Disabled")
-                        alert("Donnie should be asleep, no late night snacks allowed.")
-                    } else if(data == "Feeding") {
-                        $('#feeder').val(data)
-                    } else alert(data);
+                $.get("/feederToggle",{password: sessionStorage.getItem('password')}, function(data){
+                    switch(data) {
+                        case "Disabled":{$('#feeder').val(data).popover({title: "Donnie Is Sleeping",content: "No late night snacks allowed.",trigger: "hover",placement: "bottom"});break;}
+                        case "OverFed":{$('#feeder').val("Disabled").popover({title:"Overfed",content:"Donnie has hit his daily limit.",trigger:"hover",placement:"bottom"});break;}
+                        case "Feeding":{$('#feeder').val(data).popover({title:"Video Feed Is Delayed",content:"Your request occurred in real time already. Be patient!",trigger:"hover",placement:"bottom"
+                            }).delay(25000).queue(function() {
+                                $(this).popover('destroy'); $(this).dequeue();
+                            });
+                            break;
+                        }
+                        default:{$('#feeder').popover({title:"Feeder Disabled",content: data,trigger:"hover",placement:"bottom"});}
+                    }
                 });
             });
 
@@ -72,14 +106,53 @@
             $.get("/relayStatus", {name: "uvbLight"}, function(data){$('#uvbLight').val(data)});
             $.get("/relayStatus", {name: "heatLight"}, function(data){$('#heatLight').val(data)});
             $.get("/relayStatus", {name: "bubbles"}, function(data){$('#bubbles').val(data)});
-            $.get("/feederStatus", function(data){$('#feeder').val(data)});
+            $.get("/feederStatus", function(data){
+                switch(data) {
+                    case "Disabled":{$('#feeder').val(data).popover({title: "Donnie Is Sleeping",content: "No late night snacks allowed.",trigger: "hover",placement: "bottom"});break;}
+                    case "OverFed":{$('#feeder').val(data).popover({title:"Overfed",content:"Donnie has hit his daily limit.",trigger:"hover",placement:"bottom"});break;}
+                    case "Feed": {$('#feeder').val(data).popover("destroy");break;}
+                    default:{$('#feeder').val("Disabled").popover({title:"Feeder Disabled",content: data,trigger:"hover",placement:"bottom"});}
+                }
+            });
             setInterval(function() {
                 $.get("/relayStatus", {name: "mainLight"}, function(data){$('#mainLight').val(data)});
                 $.get("/relayStatus", {name: "uvbLight"}, function(data){$('#uvbLight').val(data)});
                 $.get("/relayStatus", {name: "heatLight"}, function(data){$('#heatLight').val(data)});
                 $.get("/relayStatus", {name: "bubbles"}, function(data){$('#bubbles').val(data)});
-                $.get("/feederStatus", function(data){$('#feeder').val(data)});
+                $.get("/feederStatus", function(data){
+                    switch(data) {
+                        case "Disabled":{$('#feeder').val(data).popover({title: "Donnie Is Sleeping",content: "No late night snacks allowed.",trigger: "hover",placement: "bottom"});break;}
+                        case "OverFed":{$('#feeder').val(data).popover({title:"Overfed",content:"Donnie has hit his daily limit.",trigger:"hover",placement:"bottom"});break;}
+                        case "Feed": {$('#feeder').val(data).popover("destroy");break;}
+                        default:{$('#feeder').val("Disabled").popover({title:"Feeder Disabled",content: data,trigger:"hover",placement:"bottom"});}
+                    }
+                });
             }, 30000);
+
+            <!-- modal on hover -->
+            var waterCount = 0;
+            var airCount = 0;
+            var baskingCount = 0;             // vars to help monitor mouseover
+
+
+            $("div.water").mouseover(function() {
+                waterCount++;
+                if(waterCount <= 1) $("#waterModal").modal("show");
+            });
+            $("div.air").mouseover(function() {
+                airCount++;
+                if(airCount <= 1) $("#airModal").modal("show");
+            });
+            $("div.basking").mouseover(function() {
+                baskingCount++;
+                if(baskingCount <= 1) $("#baskingModal").modal("show");
+            });
+
+            <!-- get outOfWater status on load **update every 10 secs** -->
+            $.get("/turtleStatus", function(data){$('#donnieslocation').html("<p class='page-scroll'>" + "Donnie Is " + data + "</p>")});
+            setInterval(function() {
+                $.get("/turtleStatus", function(data){$('#donnieslocation').html("<p class='page-scroll'>" + "Donnie Is " + data + "</p>")});
+            }, 10000);
 
             <!-- get temperatures on load **update every minute** -->
             $.get("/getTemp", {name: "water"}, function(data){$('#waterTemp').html("<p class='temperature'>" + data + "</p>")});
@@ -97,12 +170,61 @@
             $.get("/getRoutine", {name: "dinner"}, function(data){$('#dinner').html("<p class='routine'>" + data + "</p>")});
             $.get("/getRoutine", {name: "sunset"}, function(data){$('#sunset').html("<p class='routine'>" + data + "</p>")});
 
-            <!-- determine css of LIVE FEED background -->
+            <!-- determine css of LIVE FEED background **update every minute** -->
             $.get("/getRoutine", {name: "nightTimeBool"}, function(data){
                 if(data == "true"){
                     $('#livefeed').css('background-color','Black');
                 }
             });
+            setInterval(function() {
+                $.get("/getRoutine", {name: "nightTimeBool"}, function(data){
+                    if(data == "true"){
+                        $('#livefeed').css('background-color','Black');
+                    }
+                });
+            }, 60000);
+
+            <!-- toggles for cameras -->
+            $('input[name=options]').click(function(){
+                var n = $(this).val();
+                switch(n)
+                {
+                    case '1':
+                        $('#cams').html("<iframe src='http://ipcamlive.com/player/player.php?alias=turtletankland&autoplay=1&mute=0' width='800px' height='600px' frameborder='0'></iframe>");
+                        break;
+                    case '2':
+                        $('#cams').html("<iframe src='http://ipcamlive.com/player/player.php?alias=turtletankwater&autoplay=1&mute=0' width='800px' height='600px' frameborder='0'></iframe>");
+                        break;
+                }
+            });
+
+            <!-- god mode -->
+            $("#god_mode").click(function(){
+                x++;
+                if(x == 10) {
+                    $("#god_mode_div").html("<input type='password' id='god_mode_txt'>")
+                    $("#god_mode_txt").bind("keypress", function(e) {
+                        if (e.keyCode == 13) {
+                            $.get("/godMode", {command: $("#god_mode_txt").val()}, function(data){
+                                if(data != "") sessionStorage.setItem('password', data);
+                                else {
+                                    y++;
+                                    localStorage.setItem("banned", y);
+                                    if(localStorage.getItem("banned") >= 2) $("#page-top").html("Sorry you are lame... your IP address has been logged.<br>Donnie doesn't appreciate your games.");
+                                }
+                            });
+                            $("#god_mode_div").html("");
+                            x = 0;
+                            return false;
+                        }
+                    });
+                }
+            });
+
+            var x = 0;
+            var y = (localStorage.getItem("banned") === null) ? 0 : localStorage.getItem("banned");
+            if(localStorage.getItem("banned") >= 2) $("#page-top").html("Sorry you are lame... your IP address has been logged.<br>Donnie doesn't appreciate your games.");
+            sessionStorage.setItem('password', '');
         });
     </script>
 </head>
@@ -177,30 +299,46 @@
                     <!-- twitter feed -->
                     <a href="https://twitter.com/donnietheturtle" class="twitter-follow-button" data-show-count="true" data-size="large" data-dnt="true">Follow @donnietheturtle</a>
                     <br>
-                    <section id="latest-tweets">Loading...</section>
+                    <!--donnies location-->
+                    <div id="donnieslocation"></div>
                     <!-- live camera -->
-                    <iframe src="http://ipcamlive.com/player/player.php?alias=turtletank&autoplay=1&mute=0" width="800px" height="600px"frameborder="0"></iframe>
+                    <div class="camerasradio">
+                        <div id="cams">
+                            <!-- replace html based off of radio btn -->
+                            <iframe src='http://ipcamlive.com/player/player.php?alias=turtletankland&autoplay=1&mute=0' width='800px' height='600px' frameborder='0'></iframe>
+                        </div>
+                        <div id="radio">
+                            <div class="btn-group" data-toggle="cams">
+                                <label class="btn btn-primary">
+                                    <input type="radio" name="options" value="1" checked> Above
+                                </label>
+                                <label class="btn btn-primary">
+                                    <input type="radio" name="options" value="2"> Below
+                                </label>
+                            </div>
+                        </div>
+                    </div>
                     <br>
                         <div class="container">
                             <div class="mainLight">
                                 <p>Main Light</p>
-                                <input type="button" id="mainLight" class="btn btn-primary btn-lg"/>
+                                <input type="button" id="mainLight" class="btn btn-primary btn-lg" data-toggle="popover"/>
                             </div>
                             <div class="uvbLight">
                                 <p>UVB Light</p>
-                                <input type="button" id="uvbLight" class="btn btn-primary btn-lg"/>
+                                <input type="button" id="uvbLight" class="btn btn-primary btn-lg" data-toggle="popover"/>
                             </div>
                             <div class="heatLight">
                                 <p>Heat Light</p>
-                                <input type="button" id="heatLight" class="btn btn-primary btn-lg"/>
+                                <input type="button" id="heatLight" class="btn btn-primary btn-lg" data-toggle="popover"/>
                             </div>
                             <div class="bubbles">
                                 <p>Bubbles</p>
-                                <input type="button" id="bubbles" class="btn btn-primary btn-lg"/>
+                                <input type="button" id="bubbles" class="btn btn-primary btn-lg" data-toggle="popover"/>
                             </div>
                             <div class="feeder">
                                 <p>Feeder</p>
-                                <input type="button" id="feeder" class="btn btn-primary btn-lg"/>
+                                <input type="button" id="feeder" class="btn btn-primary btn-lg" data-toggle="popover"/>
                             </div>
                         </div>
                     <br>
@@ -219,17 +357,17 @@
                 </div>
                 <div class="col-lg-12 text-center">
                     <div class="container">
-                        <div class="water">
+                        <div class="water" data-toggle="modal" data-target="#waterModal">
                             <p class="activity">WATER</p>
                             <div id = "waterTemp">
                             </div>
                         </div>
-                        <div class="air">
+                        <div class="air" data-toggle="modal" data-target="#airModal">
                             <p class="activity">AIR</p>
                             <div id = "airTemp">
                             </div>
                         </div>
-                        <div class="basking">
+                        <div class="basking" data-toggle="modal" data-target="#baskingModal">
                             <p class="activity">BASKING</p>
                             <div id = "baskingTemp">
                             </div>
@@ -239,6 +377,47 @@
             </div>
         </div>
     </section>
+
+    <!-- modal content for temperatures -->
+        <div id="waterModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <iframe src="https://domo.domo.com/link/CT6XqoUCIQeMJiLb" width='875px' height='675px' frameborder='0'></iframe>
+                    </div>
+                </div>
+            </div>
+       </div>
+        <div id="airModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <iframe src="https://domo.domo.com/link/8xPo8Y4d2AKH5UqR" width='875px' height='675px' frameborder='0'></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="baskingModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <iframe src="https://domo.domo.com/link/Yddtc4IBU4L9IIAq" width='875px' height='675px' frameborder='0'></iframe>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     <!-- routine section -->
     <section id="routine">
@@ -302,7 +481,7 @@
                 through 800 gallons per hour.</p>
                 <p>The internal temps are displayed above in real time. The backend application on the Raspberry Pi
                 will not allow for his basking area to drop below 91 degrees, or rise above 93, during the day time. The same can be said for the water which sits
-                at a nice 78 degrees. Sunrise and Sunset are updated daily and are based off that of my home town. These are the times when the aquarium
+                at a nice 76 degrees. Sunrise and Sunset are updated daily and are based off that of my home town. These are the times when the aquarium
                 reacts accordingly, turning on or off the lights and the ability to interact with Donnie.</p>
                 <p>Donnie is automatically fed at both breakfast and dinner time. Throughout the day there is the option to feed him. His daily amount is accounted
                 for in the backend application. If he gets fed at each possible opportunity during the day, very little food is provided at the end of it.
@@ -340,7 +519,8 @@
                     <div class="footer-col col-md-4">
                         <h3>Chad D'Haenens</h3>
                         <p>Donnie's Owner</p>
-                        <img th:src="@{/images/chad.png}" class="img-responsive" src="../static/images/chad.png"/>
+                        <img th:src="@{/images/chad.png}" class="img-responsive" id="god_mode" src="../static/images/chad.png"/>
+                        <div id="god_mode_div"></div>
                     </div>
                     <div class="footer-col col-md-4">
                         <h3>Chad Around the Web</h3>
@@ -354,9 +534,9 @@
                             <li>
                                 <a href="https://github.com/chaderick9" class="btn-social btn-outline"><i class="fa fa-fw fa-github"></i></a>
                             </li>
-                            <li>
+                            <!--<li>
                                 <a href="https://www.linkedin.com/in/chad-d-haenens-124407b6" class="btn-social btn-outline"><i class="fa fa-fw fa-linkedin"></i></a>
-                            </li>
+                            </li>-->
                         </ul>
                     </div>
                     <div class="footer-col col-md-4">
@@ -392,23 +572,8 @@
     <!-- custom theme JavaScript -->
     <script th:src="@{/js/freelancer.js}" src="../static/js/freelancer.js"></script>
 
-    <!-- twitter feed script -->
-    <script th:src="@{/js/twitterFetcher_min.js}" src="../static/js/twitterFetcher_min.js"></script>
-    <script>
-        function twitterInit() {
-            twitterFetcher.fetch({
-                id: '690729462258741249',
-                domId: 'latest-tweets'
-            })
-        }
-
-        twitterInit();
-
-        setInterval(twitterInit,60000);
-
-    </script>
-
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
+    <!-- twitter @follow widget -->
+   <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';
         if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';
             fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 

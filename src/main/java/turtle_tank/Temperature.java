@@ -75,7 +75,7 @@ public class Temperature implements Runnable {
     }
 
     static float getTooHotWater() {
-        float tooHotWater = 78f;
+        float tooHotWater = 76f;
         return tooHotWater; }
 }
 

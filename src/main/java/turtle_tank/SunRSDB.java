@@ -16,8 +16,8 @@ public class SunRSDB implements Runnable {
     @Override
     public void run() {
         String temp = "jdbc:mysql://localhost:3306/TurtleTank";
-        String user = "********";
-        String password = "********";
+        String user = "chaderick9";
+        String password = "DHaenens09!";
 
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -75,8 +75,8 @@ public class SunRSDB implements Runnable {
         return dinner;
     }
 
-    public static void setNightimeBool(String a) {
-        SunRSDB.nightTime = (a.equals("true")) ? true : false;
+    public static void setNightimeBool(boolean nightTime) {
+        SunRSDB.nightTime = nightTime;
     }
 
     public static boolean getNighttimeBool(){

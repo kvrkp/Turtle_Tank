@@ -54,46 +54,57 @@ public class RelayController {
 
     @RequestMapping(value = "/relayToggle", method = RequestMethod.GET)
     @ResponseBody
-    synchronized public String relayToggle(@RequestParam(value="name", required = true) String name) {
+    synchronized public String relayToggle(@RequestParam(value="name", required = true) String name, @RequestParam(value="password", required = false) String password) {
         String status;
+        boolean godMode = false;                                                                           // boolean added for godMode
 
-        if(SunRSDB.getNighttimeBool()) status = "NightTime";                        // check if nighttime, if so status = nighttime
+        if(password.equals(GodModeController.getThePassword())) godMode = true;                            // check to see if passwords match, and enable godMode
+
+        if(SunRSDB.getNighttimeBool() && !godMode) status = "NightTime";                                   // check if nighttime, if so status = nighttime
         else {
             switch (name) {
                 case "mainLight":
-                    if (mainLightTimeout) status = "Timeout";                       // check to see if timeout active
-                    else {                                                          // if timeout NOT active
-                        GPIO.mainLight.toggle();                                    // toggle switch
-                        status = (GPIO.mainLight.isHigh()) ? "Off" : "On";          // assign status value based off of toggle status
-                        Timeout mlClass = new Timeout("mainLightTimeout");          // create instance of inner class and call start()
-                        (new Thread(mlClass)).start();                              // activate timeout for however long above
+                    if (mainLightTimeout && !godMode) status = "Timeout";                                  // check to see if timeout active
+                    else {                                                                                 // if timeout NOT active
+                        GPIO.mainLight.toggle();                                                           // toggle switch
+                        status = (GPIO.mainLight.isHigh()) ? "Off" : "On";                                 // assign status value based off of toggle status
+                        if(!godMode) {                                                                     // if not god mode, you must have limits!
+                            Timeout mlClass = new Timeout("mainLightTimeout");                             // create instance of inner class and call start()
+                            (new Thread(mlClass)).start();                                                 // activate timeout for however long above
+                        }
                     }
                     break;
                 case "uvbLight":
-                    if (uvbLightTimeout) status = "Timeout";
+                    if (uvbLightTimeout && !godMode) status = "Timeout";
                     else {
                         GPIO.uvbLight.toggle();
                         status = (GPIO.uvbLight.isHigh()) ? "Off" : "On";
-                        Timeout uvblClass = new Timeout("uvbLightTimeout");
-                        (new Thread(uvblClass)).start();
+                        if(!godMode) {
+                            Timeout uvblClass = new Timeout("uvbLightTimeout");
+                            (new Thread(uvblClass)).start();
+                        }
                     }
                     break;
                 case "heatLight":
-                    if (heatLightTimeout) status = "Timeout";
+                    if (heatLightTimeout && !godMode) status = "Timeout";
                     else {
                         GPIO.heatLight.toggle();
                         status = (GPIO.heatLight.isHigh()) ? "Off" : "On";
-                        Timeout hlClass = new Timeout("heatLightTimeout");
-                        (new Thread(hlClass)).start();
+                        if(!godMode) {
+                            Timeout hlClass = new Timeout("heatLightTimeout");
+                            (new Thread(hlClass)).start();
+                        }
                     }
                     break;
                 case "bubbles":
-                    if (bubblesTimeout) status = "Timeout";
+                    if (bubblesTimeout && !godMode) status = "Timeout";
                     else {
                         GPIO.bubbles.toggle();
                         status = (GPIO.bubbles.isHigh()) ? "Off" : "On";
-                        Timeout bClass = new Timeout("bubblesTimeout");
-                        (new Thread(bClass)).start();
+                        if(!godMode) {
+                            Timeout bClass = new Timeout("bubblesTimeout");
+                            (new Thread(bClass)).start();
+                        }
                     }
                     break;
                 default:
