@@ -13,10 +13,10 @@ public class DockController {
     @ResponseBody
     synchronized public static String turtleStatus() {
         if(outOfWater) {
-            return "Out Of The Water";
+            return "OUT OF THE WATER";
         }
         else {
-            return "In The Water";
+            return "IN THE WATER";
         }
     }
 

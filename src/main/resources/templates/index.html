@@ -129,29 +129,21 @@
                 });
             }, 30000);
 
-            <!-- modal on hover -->
-            var waterCount = 0;
-            var airCount = 0;
-            var baskingCount = 0;             // vars to help monitor mouseover
-
-
-            $("div.water").mouseover(function() {
-                waterCount++;
-                if(waterCount <= 1) $("#waterModal").modal("show");
+            <!-- modal on click of temps -->
+            $("div.water").click(function() {
+                $("#tempChartIframe").attr('src','https://domo.domo.com/link/CT6XqoUCIQeMJiLb');
             });
-            $("div.air").mouseover(function() {
-                airCount++;
-                if(airCount <= 1) $("#airModal").modal("show");
+            $("div.air").click(function() {
+                $("#tempChartIframe").attr('src','https://domo.domo.com/link/8xPo8Y4d2AKH5UqR');
             });
-            $("div.basking").mouseover(function() {
-                baskingCount++;
-                if(baskingCount <= 1) $("#baskingModal").modal("show");
+            $("div.basking").click(function() {
+                $("#tempChartIframe").attr('src','https://domo.domo.com/link/Yddtc4IBU4L9IIAq');
             });
 
             <!-- get outOfWater status on load **update every 10 secs** -->
-            $.get("/turtleStatus", function(data){$('#donnieslocation').html("<p class='page-scroll'>" + "Donnie Is " + data + "</p>")});
+            $.get("/turtleStatus", function(data){$('#donnieslocation').html("<p class='events'>" + "DONNIE IS " + data + "</p>")});
             setInterval(function() {
-                $.get("/turtleStatus", function(data){$('#donnieslocation').html("<p class='page-scroll'>" + "Donnie Is " + data + "</p>")});
+                $.get("/turtleStatus", function(data){$('#donnieslocation').html("<p class='events'>" + "DONNIE IS " + data + "</p>")});
             }, 10000);
 
             <!-- get temperatures on load **update every minute** -->
@@ -176,13 +168,6 @@
                     $('#livefeed').css('background-color','Black');
                 }
             });
-            setInterval(function() {
-                $.get("/getRoutine", {name: "nightTimeBool"}, function(data){
-                    if(data == "true"){
-                        $('#livefeed').css('background-color','Black');
-                    }
-                });
-            }, 60000);
 
             <!-- toggles for cameras -->
             $('input[name=options]').click(function(){
@@ -354,20 +339,21 @@
                 <div class="col-lg-12 text-center">
                     <h2>Temperatures</h2>
                     <hr class="star-light">
+                    <p class='events'>CLICK INDIVIDUAL TEMPS FOR HISTORY</P>
                 </div>
                 <div class="col-lg-12 text-center">
                     <div class="container">
-                        <div class="water" data-toggle="modal" data-target="#waterModal">
+                        <div class="water" data-toggle="modal" data-target="#temperatureModal">
                             <p class="activity">WATER</p>
                             <div id = "waterTemp">
                             </div>
                         </div>
-                        <div class="air" data-toggle="modal" data-target="#airModal">
+                        <div class="air" data-toggle="modal" data-target="#temperatureModal">
                             <p class="activity">AIR</p>
                             <div id = "airTemp">
                             </div>
                         </div>
-                        <div class="basking" data-toggle="modal" data-target="#baskingModal">
+                        <div class="basking" data-toggle="modal" data-target="#temperatureModal">
                             <p class="activity">BASKING</p>
                             <div id = "baskingTemp">
                             </div>
@@ -379,45 +365,15 @@
     </section>
 
     <!-- modal content for temperatures -->
-        <div id="waterModal" class="modal fade" role="dialog">
-            <div class="modal-dialog" style="position: relative;">
-                <!-- Modal content-->
-                <div class="modal-content"style="top: -170px;">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
+        <div id="temperatureModal" class="modal fade" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
                     <div class="modal-body">
-                        <iframe src="https://domo.domo.com/link/CT6XqoUCIQeMJiLb" width='875px' height='675px' frameborder='0'></iframe>
+                        <div style=" height: 750px; width: 950px;"><iframe id="tempChartIframe" height="100%" width='100%' frameborder='0'></iframe></div>
                     </div>
                 </div>
             </div>
        </div>
-        <div id="airModal" class="modal fade" role="dialog">
-            <div class="modal-dialog" style="position: relative;">
-                <!-- Modal content-->
-                <div class="modal-content"style="top: -170px;">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <iframe src="https://domo.domo.com/link/8xPo8Y4d2AKH5UqR" width='875px' height='675px' frameborder='0'></iframe>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div id="baskingModal" class="modal fade" role="dialog">
-            <div class="modal-dialog" style="position: relative;">
-                <!-- Modal content-->
-                <div class="modal-content"style="top: -170px;">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <iframe src="https://domo.domo.com/link/Yddtc4IBU4L9IIAq" width='875px' height='675px' frameborder='0'></iframe>
-                    </div>
-                </div>
-            </div>
-        </div>
 
     <!-- routine section -->
     <section id="routine">
