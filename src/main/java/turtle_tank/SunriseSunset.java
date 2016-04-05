@@ -65,17 +65,13 @@ public class SunriseSunset {
         }
     }
 
-    static int getSunRiseHour() {
-        return sunRiseHour;
-    }
+    static int getSunRiseHour() { return sunRiseHour; }
 
     static int getSunRiseMinute() {
         return sunRiseMinute;
     }
 
-    static int getSunSetHour() {
-        return sunSetHour + 12;
-    }
+    static int getSunSetHour() { return sunSetHour + 12;}
 
     static int getSunSetMinute() {
         return sunSetMinute;

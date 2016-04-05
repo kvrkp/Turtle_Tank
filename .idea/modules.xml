@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/TurtleTank.iml" filepath="$PROJECT_DIR$/TurtleTank.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TurtleTank.iml" filepath="$PROJECT_DIR$/.idea/modules/TurtleTank.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TurtleTank_main.iml" filepath="$PROJECT_DIR$/.idea/modules/TurtleTank_main.iml" group="TurtleTank" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/TurtleTank_test.iml" filepath="$PROJECT_DIR$/.idea/modules/TurtleTank_test.iml" group="TurtleTank" />
     </modules>
   </component>
 </project>

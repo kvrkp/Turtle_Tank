@@ -3,9 +3,12 @@
     <words>
       <w>airtemp</w>
       <w>baskingtemp</w>
+      <w>hashtags</w>
+      <w>livefeed</w>
       <w>mins</w>
       <w>raspi</w>
       <w>rsdb</w>
+      <w>tempvars</w>
       <w>watertemp</w>
     </words>
   </dictionary>

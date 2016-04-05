@@ -12,10 +12,10 @@ public class GPIO {
     final static GpioPinDigitalOutput uvbLight = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_23, PinState.HIGH);
     final static GpioPinDigitalOutput heatLight = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_24, PinState.LOW);
     final static GpioPinDigitalOutput bubbles = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_25, PinState.HIGH);
-    final static GpioPinDigitalOutput waterHeat = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_26, PinState.LOW);
+    // final GpioPinDigitalOutput DEAD = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_26, PinState.LOW);
     final static GpioPinDigitalOutput feeder = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_27, PinState.LOW);
     final static GpioPinDigitalOutput waterSwitch = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_28, PinState.HIGH);
-    // final GpioPinDigitalOutput DEAD = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_29, PinState.LOW);
+    final static GpioPinDigitalOutput waterHeat = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_29, PinState.LOW);
 
     // provision gpio pin #0 as an input pin with its internal pull down resistor enabled -- light on/off button
     final static GpioPinDigitalInput buttonLights = gpio.provisionDigitalInputPin(RaspiPin.GPIO_00, PinPullResistance.PULL_DOWN);

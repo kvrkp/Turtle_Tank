@@ -90,7 +90,7 @@ public class FeederController {
         }
     }
 
-    public static boolean overFed() { return dailyFeedTotal >= 6; }
+    public static boolean overFed() { return dailyFeedTotal >= 5; }
 
     public static void incrementDailyFeedTotal() {
         dailyFeedTotal++;

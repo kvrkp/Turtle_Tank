@@ -13,28 +13,33 @@ import twitter4j.TwitterException;
 
 import javax.print.Doc;
 
+import static com.pi4j.io.gpio.PinState.HIGH;
+
 @SpringBootApplication
 public class Main {
     public static void main(String[] args) throws InterruptedException {
 
-        SpringApplication.run(Main.class, args);                        // start Spring Application
+        SpringApplication.run(Main.class, args);        // start Spring Application
 
-        LocalTime curTime;                                              // create LocalTime object
+        LocalTime curTime;                              // create LocalTime object
 
         // local variables
         boolean firstBoot = true;
         int hour, minute, second, sunriseHour = 0, sunsetHour = 0, sunriseMinute = 0, sunsetMinute = 0;
         int breakfastHour = 0, breakfastMinute = 0, dinnerHour = 0, dinnerMinute = 0;
 
-        Temperature temperature = new Temperature();                    // create Temperature object
+        Temperature temperature = new Temperature();        // create Temperature object
 
         // create TmpDB object. This will log temperatures to database every minute
         TmpDB tmpDB = new TmpDB();
 
+        // create MotionDockDB object. This will lock motion sensed on the dock
+        MotionDockDB motionDockDB = new MotionDockDB();
+
         // create SunRSDB object. This will log sunrise, sunset, breakfast, dinner to database once a day and at startup
         SunRSDB sunRSDB = new SunRSDB();
 
-        (new Thread(temperature)).start();                              // start Temperature thread, updated every 5 seconds
+        (new Thread(temperature)).start();      // start Temperature thread, updated every 5 seconds
 
         // this will ensure that all pins are off if application is interrupted
         GPIO.gpio.setShutdownOptions(true, PinState.LOW, GPIO.pins);
@@ -50,7 +55,7 @@ public class Main {
         GPIO.buttonLights.addListener(new GpioPinListenerDigital() {
             @Override
             public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
-                if(event.getState() == PinState.HIGH) {                 // if button clicked toggle lights
+                if(event.getState() == HIGH) {      // if button clicked toggle lights
                     GPIO.mainLight.toggle();
                     GPIO.uvbLight.toggle();
                 }
@@ -61,7 +66,7 @@ public class Main {
         GPIO.buttonFloat.addListener(new GpioPinListenerDigital() {
             @Override
             public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
-                if(event.getState() == PinState.HIGH) {                 // if float low turn on water
+                if(event.getState() == HIGH) {      // if float low turn on water
                     GPIO.waterSwitch.low();
                 } else {
                     GPIO.waterSwitch.high();
@@ -73,8 +78,8 @@ public class Main {
         GPIO.buttonMotionDock.addListener(new GpioPinListenerDigital() {
             @Override
             public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
-                if(event.getState() == PinState.HIGH) {                                             // if circuit complete motion on dock
-                    DockController.setOutOfWater(true);                                             // set to true right away
+                if(event.getState() == HIGH) {              // if circuit complete motion on dock
+                    DockController.setOutOfWater(true);     // set to true right away
                 } else {
                     DockController.setOutOfWater(false);
                 }
@@ -94,15 +99,11 @@ public class Main {
                 // create sunriseSunset object
                 SunriseSunset sunriseSunset = new SunriseSunset();
 
-                DockController.setOutOfWater(true);
-
                 // initialize local variables
                 sunriseHour = sunriseSunset.getSunRiseHour();
                 sunriseMinute = sunriseSunset.getSunRiseMinute();
                 sunsetHour = sunriseSunset.getSunSetHour();
                 sunsetMinute = sunriseSunset.getSunSetMinute();
-                System.out.println(hour + ":" + leadingZero(minute) + "\tSunrise, Sunset updated\n\tSunrise: " + sunriseHour + ":" +
-                        leadingZero(sunriseMinute) + "am" + "\n\tSunset: " + (sunsetHour - 12) + ":" + leadingZero(sunsetMinute) + "pm");
 
                 // set sunriseSunset object to null and allow for garbage collection
                 sunriseSunset = null;
@@ -145,7 +146,7 @@ public class Main {
                 GPIO.uvbLight.low();
                 GPIO.bubbles.low();
                 SunRSDB.setNightimeBool(false);
-                try {                                                   // post today's routine to Donnie's many followers
+                try {                                                               // post today's routine to Donnie's many followers
                     TwitterPost.postTodaysRoutine();
                 } catch (TwitterException e) {
                     System.err.println("Twitter: today's routine not posted");
@@ -167,33 +168,50 @@ public class Main {
                 (new Thread(tmpDB)).start();
             }
 
+            // log motion on dock to database every minute
+            if(second == 10 ) {
+                if(GPIO.buttonMotionDock.isHigh()) {
+                    MotionDockDB.setMotion(true);
+                } else {
+                    MotionDockDB.setMotion(false);
+                }
+                (new Thread(motionDockDB)).start();
+            }
+
             // maintain basking below 92 degrees during daytime hrs, air below 80 during night time hrs
             // check every 10 seconds
             if(second % 10 == 0 && GPIO.mainLight.getState() == PinState.LOW) {
                 if(temperature.getBasking() > temperature.getTooHotDay() && GPIO.heatLight.getState() == PinState.LOW) GPIO.heatLight.high();
-                else if(temperature.getBasking() < temperature.getTooHotDay() && GPIO.heatLight.getState() == PinState.HIGH) GPIO.heatLight.low();
-            } else if(second % 10 == 0 && GPIO.mainLight.getState() == PinState.HIGH) {
+                else if(temperature.getBasking() < temperature.getTooHotDay() && GPIO.heatLight.getState() == HIGH) GPIO.heatLight.low();
+            } else if(second % 10 == 0 && GPIO.mainLight.getState() == HIGH) {
                 if(temperature.getAir() > temperature.getTooHotNight() && GPIO.heatLight.getState() == PinState.LOW) GPIO.heatLight.high();
-                else if(temperature.getAir() < temperature.getTooHotNight() && GPIO.heatLight.getState() == PinState.HIGH) GPIO.heatLight.low();
+                else if(temperature.getAir() < temperature.getTooHotNight() && GPIO.heatLight.getState() == HIGH) GPIO.heatLight.low();
             }
 
             // maintain water temp of 76 degrees, check every 10 sec
             if(second % 10 == 0) {
                 if(temperature.getWater() > temperature.getTooHotWater() && GPIO.waterHeat.getState() == PinState.LOW) GPIO.waterHeat.high();
-                else if(temperature.getWater() < temperature.getTooHotWater() && GPIO.waterHeat.getState() == PinState.HIGH) GPIO.waterHeat.low();
+                else if(temperature.getWater() < temperature.getTooHotWater() && GPIO.waterHeat.getState() == HIGH) GPIO.waterHeat.low();
             }
+
+            /* FEEDER FA-COOKIN BROKEN!
 
             // feed turtle 5 mins after sunrise,
             if(hour == breakfastHour && minute == breakfastMinute && second == 0) {
-                System.out.println(FeederController.feederToggle(""));
+                FeederController.feederToggle("");
             }
 
             // feed turtle 30 mins prior to sunset
             if(hour == dinnerHour && minute == dinnerMinute && second == 0) {
                 if(!FeederController.overFed()) {
-                    System.out.println(FeederController.feederToggle(""));
+                    FeederController.feederToggle("");
                 }
             }
+
+            */
+
+            // check every 5 mins to make sure lights on during daytime
+            if(minute % 5 == 0 && second == 0 && !SunRSDB.getNighttimeBool() && GPIO.mainLight.isHigh()) { GPIO.mainLight.low(); }
 
             // sleep main for one sec
             Thread.sleep(1000);

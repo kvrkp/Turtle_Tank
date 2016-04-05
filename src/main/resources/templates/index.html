@@ -24,19 +24,20 @@
 
     <!-- jQuery Calls on load -->
     <script type="text/javascript">
-        $(document).ready(function(){
+        $(document).ready(function() {
             <!-- testing zone wear hardhats -->
 
+            <!-- local vars -->
 
             <!-- set relay toggle buttons on load -->
             $("#mainLight").click(function(){
                 $.get("/relayToggle", {name: "mainLight", password: sessionStorage.getItem('password')}, function(data){
                     switch(data) {
-                        case "NightTime":{$("#mainLight").popover({title:"Donnie Is Sleeping", content:"Try again after Sunrise.", trigger:"hover", placement:"bottom"});break;}
+                        case "NightTime":{$("#mainLight").popover({title:"Donnie Is Sleeping", content:"Try again after Sunrise.", trigger:"hover", placement:"bottom"}).popover("show");break;}
                         case "Timeout": break;
                         default: {
-                            $("#mainLight").val(data).popover({title:"Video Feed Is Delayed", content:"Your request occurred in real time already. Be patient!", trigger:"hover", placement:"bottom"
-                            }).delay(25000).queue(function() {
+                            $("#mainLight").val(data).popover({title:"Video Feed Is Delayed", content:"Main Light has been switched " + data + ". Please be patient.", trigger:"hover", placement:"bottom"
+                            }).popover("show").delay(25000).queue(function() {
                                 $(this).popover('destroy'); $(this).dequeue();
                             });
                         }
@@ -46,11 +47,11 @@
             $("#uvbLight").click(function() {
                 $.get("/relayToggle", {name: "uvbLight", password: sessionStorage.getItem('password')}, function (data){
                     switch(data) {
-                        case "NightTime": {$("#uvbLight").popover({title:"Donnie Is Sleeping", content:"Try again after Sunrise.", trigger:"hover", placement:"bottom"});break;}
+                        case "NightTime": {$("#uvbLight").popover({title:"Donnie Is Sleeping", content:"Try again after Sunrise.", trigger:"hover", placement:"bottom"}).popover("show");break;}
                         case "Timeout": break;
                         default: {
-                            $("#uvbLight").val(data).popover({title:"Video Feed Is Delayed", content:"Your request occurred in real time already. Be patient!", trigger:"hover", placement:"bottom"
-                            }).delay(25000).queue(function() {
+                            $("#uvbLight").val(data).popover({title:"Video Feed Is Delayed", content:"UVB Light has been switched " + data + ". Please be patient.", trigger:"hover", placement:"bottom"
+                            }).popover("show").delay(25000).queue(function() {
                                 $(this).popover('destroy'); $(this).dequeue();
                             });
                         }
@@ -60,11 +61,11 @@
             $("#heatLight").click(function(){
                 $.get("/relayToggle", {name: "heatLight", password: sessionStorage.getItem('password')}, function(data){
                     switch(data) {
-                        case "NightTime": {$("#heatLight").popover({title:"Donnie Is Sleeping", content:"Try again after Sunrise.", trigger:"hover", placement:"bottom"});break;}
+                        case "NightTime": {$("#heatLight").popover({title:"Donnie Is Sleeping", content:"Try again after Sunrise.", trigger:"hover", placement:"bottom"}).popover("show");break;}
                         case "Timeout": break;
                         default: {
-                            $("#heatLight").val(data).popover({title:"Video Feed Is Delayed", content:"Your request occurred in real time already. Be patient!", trigger:"hover", placement:"bottom"
-                            }).delay(25000).queue(function() {
+                            $("#heatLight").val(data).popover({title:"Video Feed Is Delayed", content:"Heat Light has been switched " + data + ". Please be patient.", trigger:"hover", placement:"bottom"
+                            }).popover("show").delay(25000).queue(function() {
                                 $(this).popover('destroy'); $(this).dequeue();
                             });
                         }
@@ -74,24 +75,25 @@
             $("#bubbles").click(function(){
                 $.get("/relayToggle", {name: "bubbles", password: sessionStorage.getItem('password')}, function(data){
                     switch(data) {
-                        case "NightTime": {$("#bubbles").popover({title:"Donnie Is Sleeping",content:"Try again after Sunrise.",trigger:"hover",placement:"bottom"});break;}
+                        case "NightTime": {$("#bubbles").popover({title:"Donnie Is Sleeping",content:"Try again after Sunrise.",trigger:"hover",placement:"bottom"}).popover("show");break;}
                         case "Timeout": break;
                         default: {
-                            $("#bubbles").val(data).popover({title:"Video Feed Is Delayed",content:"Your request occurred in real time already. Be patient!",trigger:"hover",placement:"bottom"
-                            }).delay(25000).queue(function() {
+                            $("#bubbles").val(data).popover({title:"Video Feed Is Delayed",content:"Bubbles have been switched " + data + ". Please be patient.",trigger:"hover",placement:"bottom"
+                            }).popover("show").delay(25000).queue(function() {
                                 $(this).popover('destroy'); $(this).dequeue();
                             });
                         }
                     }
                 });
             });
-            $("#feeder").click(function(){
+            $('#feeder').val("Disabled").popover({title: "Feeder Disabled",content: "Under construction",trigger: "hover",placement: "bottom"});
+            /*$("#feeder").click(function(){
                 $.get("/feederToggle",{password: sessionStorage.getItem('password')}, function(data){
                     switch(data) {
                         case "Disabled":{$('#feeder').val(data).popover({title: "Donnie Is Sleeping",content: "No late night snacks allowed.",trigger: "hover",placement: "bottom"});break;}
                         case "OverFed":{$('#feeder').val("Disabled").popover({title:"Overfed",content:"Donnie has hit his daily limit.",trigger:"hover",placement:"bottom"});break;}
-                        case "Feeding":{$('#feeder').val(data).popover({title:"Video Feed Is Delayed",content:"Your request occurred in real time already. Be patient!",trigger:"hover",placement:"bottom"
-                            }).delay(25000).queue(function() {
+                        case "Feeding":{$('#feeder').val(data).popover({title:"Video Feed Is Delayed",content:"Donnie will be fed here shortly. Please be patient.",trigger:"hover",placement:"bottom"
+                            }).popover("show").delay(25000).queue(function() {
                                 $(this).popover('destroy'); $(this).dequeue();
                             });
                             break;
@@ -99,37 +101,62 @@
                         default:{$('#feeder').popover({title:"Feeder Disabled",content: data,trigger:"hover",placement:"bottom"});}
                     }
                 });
-            });
+            });*/
 
             <!-- set relay toggle status on load **update every 30 secs** -->
             $.get("/relayStatus", {name: "mainLight"}, function(data){$('#mainLight').val(data)});
             $.get("/relayStatus", {name: "uvbLight"}, function(data){$('#uvbLight').val(data)});
             $.get("/relayStatus", {name: "heatLight"}, function(data){$('#heatLight').val(data)});
             $.get("/relayStatus", {name: "bubbles"}, function(data){$('#bubbles').val(data)});
-            $.get("/feederStatus", function(data){
+            /*$.get("/feederStatus", function(data){
                 switch(data) {
                     case "Disabled":{$('#feeder').val(data).popover({title: "Donnie Is Sleeping",content: "No late night snacks allowed.",trigger: "hover",placement: "bottom"});break;}
                     case "OverFed":{$('#feeder').val(data).popover({title:"Overfed",content:"Donnie has hit his daily limit.",trigger:"hover",placement:"bottom"});break;}
                     case "Feed": {$('#feeder').val(data).popover("destroy");break;}
                     default:{$('#feeder').val("Disabled").popover({title:"Feeder Disabled",content: data,trigger:"hover",placement:"bottom"});}
                 }
-            });
+            });*/
             setInterval(function() {
                 $.get("/relayStatus", {name: "mainLight"}, function(data){$('#mainLight').val(data)});
                 $.get("/relayStatus", {name: "uvbLight"}, function(data){$('#uvbLight').val(data)});
                 $.get("/relayStatus", {name: "heatLight"}, function(data){$('#heatLight').val(data)});
                 $.get("/relayStatus", {name: "bubbles"}, function(data){$('#bubbles').val(data)});
-                $.get("/feederStatus", function(data){
+                /*$.get("/feederStatus", function(data){
                     switch(data) {
                         case "Disabled":{$('#feeder').val(data).popover({title: "Donnie Is Sleeping",content: "No late night snacks allowed.",trigger: "hover",placement: "bottom"});break;}
                         case "OverFed":{$('#feeder').val(data).popover({title:"Overfed",content:"Donnie has hit his daily limit.",trigger:"hover",placement:"bottom"});break;}
                         case "Feed": {$('#feeder').val(data).popover("destroy");break;}
                         default:{$('#feeder').val("Disabled").popover({title:"Feeder Disabled",content: data,trigger:"hover",placement:"bottom"});}
                     }
-                });
+                });*/
             }, 30000);
 
+            <!-- temps on mouseover css -->
+            $("#h2Temps").hover(function() {
+                $(this).css({'color': '#2C3E50', 'cursor': 'pointer'});
+            }, function() {
+                $(this).css({'color': 'white', 'cursor': 'auto'});
+            });
+            $("div.water").hover(function() {
+                $(this).css({'color': '#2C3E50', 'cursor': 'pointer'});
+            }, function() {
+                $(this).css({'color': 'white', 'cursor': 'auto'});
+            });
+            $("div.air").hover(function() {
+                $(this).css({'color': '#2C3E50', 'cursor': 'pointer'} );
+            }, function() {
+                $(this).css({'color': 'white', 'cursor': 'auto'} );
+            });
+            $("div.basking").hover(function() {
+                $(this).css({'color': '#2C3E50', 'cursor': 'pointer'} );
+            }, function() {
+                $(this).css({'color': 'white', 'cursor': 'auto'} );
+            });
+
             <!-- modal on click of temps -->
+            $("#h2Temps").click(function() {
+                $("#tempChartIframe").attr('src','https://domo.domo.com/link/v8Tw7NUjmAkr4SWy');
+            });
             $("div.water").click(function() {
                 $("#tempChartIframe").attr('src','https://domo.domo.com/link/CT6XqoUCIQeMJiLb');
             });
@@ -140,10 +167,31 @@
                 $("#tempChartIframe").attr('src','https://domo.domo.com/link/Yddtc4IBU4L9IIAq');
             });
 
-            <!-- get outOfWater status on load **update every 10 secs** -->
-            $.get("/turtleStatus", function(data){$('#donnieslocation').html("<p class='events'>" + "DONNIE IS " + data + "</p>")});
+            <!-- get outOfWater status on load, determine cam feed as well **update every 10 secs** -->
+            $.get("/turtleStatus", function(data) {
+                $('#donnieslocation').html("<p class='events'>" + "DONNIE IS " + data + "</p>")
+                if((data == "OUT OF THE WATER")) {
+                    $('#cams').html("<iframe src='http://ipcamlive.com/player/player.php?alias=turtletankland&autoplay=1&mute=0' allowfullscreen frameborder='0'></iframe>");
+                    $('#radioAbove').attr('checked', true);
+                    sessionStorage.setItem("camStatus", "above");
+
+                } else {
+                    $('#cams').html("<iframe src='http://ipcamlive.com/player/player.php?alias=turtletankwater&autoplay=1&mute=0' allowfullscreen frameborder='0'></iframe>");
+                    $('#radioBelow').attr('checked', true);
+                    sessionStorage.setItem("camStatus", "below");
+                }
+            });
             setInterval(function() {
-                $.get("/turtleStatus", function(data){$('#donnieslocation').html("<p class='events'>" + "DONNIE IS " + data + "</p>")});
+                $.get("/turtleStatus", function(data) {
+                    $('#donnieslocation').html("<p class='events'>" + "DONNIE IS " + data + "</p>")
+                    if((data == "OUT OF THE WATER") && sessionStorage.getItem("auto") == "true" && sessionStorage.getItem('camStatus') != "above") {
+                        $('#cams').html("<iframe src='http://ipcamlive.com/player/player.php?alias=turtletankland&autoplay=1&mute=0' allowfullscreen frameborder='0'></iframe>");
+                        sessionStorage.setItem("camStatus", "above");
+                    } else if((data == "IN THE WATER") && sessionStorage.getItem("auto") == "true" && sessionStorage.getItem('camStatus') != "below") {
+                        $('#cams').html("<iframe src='http://ipcamlive.com/player/player.php?alias=turtletankwater&autoplay=1&mute=0' allowfullscreen frameborder='0'></iframe>");
+                        sessionStorage.setItem("camStatus", "below");
+                    }
+                });
             }, 10000);
 
             <!-- get temperatures on load **update every minute** -->
@@ -165,9 +213,20 @@
             <!-- determine css of LIVE FEED background **update every minute** -->
             $.get("/getRoutine", {name: "nightTimeBool"}, function(data){
                 if(data == "true"){
-                    $('#livefeed').css('background-color','Black');
+                    $('#livefeed').attr("id", "livefeedNight")
+                } else{
+                    $('#livefeedNight').attr("id", "livefeed")
                 }
             });
+            setInterval(function() {
+                $.get("/getRoutine", {name: "nightTimeBool"}, function(data) {
+                    if (data == "true") {
+                        $('#livefeed').attr("id", "livefeedNight")
+                    }else{
+                        $('#livefeedNight').attr("id", "livefeed")
+                    }
+                })
+            }, 60000);
 
             <!-- toggles for cameras -->
             $('input[name=options]').click(function(){
@@ -175,11 +234,18 @@
                 switch(n)
                 {
                     case '1':
-                        $('#cams').html("<iframe src='http://ipcamlive.com/player/player.php?alias=turtletankland&autoplay=1&mute=0' width='800px' height='600px' frameborder='0'></iframe>");
+                        $('#cams').html("<iframe src='http://ipcamlive.com/player/player.php?alias=turtletankland&autoplay=1&mute=0' allowfullscreen frameborder='0'></iframe>");
+                        sessionStorage.setItem("auto", false);
+                        sessionStorage.setItem("camStatus", "above");
                         break;
                     case '2':
-                        $('#cams').html("<iframe src='http://ipcamlive.com/player/player.php?alias=turtletankwater&autoplay=1&mute=0' width='800px' height='600px' frameborder='0'></iframe>");
+                        $('#cams').html("<iframe src='http://ipcamlive.com/player/player.php?alias=turtletankwater&autoplay=1&mute=0' allowfullscreen frameborder='0'></iframe>");
+                        sessionStorage.setItem("auto", false);
+                        sessionStorage.setItem("camStatus", "below");
                         break;
+                    case '3':
+                        sessionStorage.setItem("auto", true);
+                        sessionStorage.setItem("camStatus", "auto");
                 }
             });
 
@@ -187,7 +253,7 @@
             $("#god_mode").click(function(){
                 x++;
                 if(x == 10) {
-                    $("#god_mode_div").html("<input type='password' id='god_mode_txt'>")
+                    $("#god_mode_div").html("<input type='password' id='god_mode_txt'>");
                     $("#god_mode_txt").bind("keypress", function(e) {
                         if (e.keyCode == 13) {
                             $.get("/godMode", {command: $("#god_mode_txt").val()}, function(data){
@@ -266,7 +332,7 @@
                     <img th:src="@{/images/turtle.png}" class="img-responsive" src="../static/images/turtle.png"/>
                     <div class="intro-text">
                         <span class="name">Donnie The Turtle</span>
-                        <hr class="star-light">
+                        <hr class="style-white">
                         <span class="skills">Custom - Red-eared Slider - Habitat</span>
                     </div>
                 </div>
@@ -280,25 +346,28 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h2>Live Feed</h2>
-                    <hr class="star-primary">
-                    <!-- twitter feed -->
-                    <a href="https://twitter.com/donnietheturtle" class="twitter-follow-button" data-show-count="true" data-size="large" data-dnt="true">Follow @donnietheturtle</a>
-                    <br>
+                    <hr class="style-dark">
                     <!--donnies location-->
                     <div id="donnieslocation"></div>
+                    <br>
+                    <!-- twitter feed -->
+                    <a href="https://twitter.com/donnietheturtle" class="twitter-follow-button" data-show-count="false" data-size="large" data-dnt="true">Follow @donnietheturtle</a>
                     <!-- live camera -->
                     <div class="camerasradio">
                         <div id="cams">
                             <!-- replace html based off of radio btn -->
-                            <iframe src='http://ipcamlive.com/player/player.php?alias=turtletankland&autoplay=1&mute=0' width='800px' height='600px' frameborder='0'></iframe>
+                            <iframe src='http://ipcamlive.com/player/player.php?alias=turtletankland&autoplay=1&mute=0' allowfullscreen frameborder='0'></iframe>
                         </div>
                         <div id="radio">
                             <div class="btn-group" data-toggle="cams">
                                 <label class="btn btn-primary">
-                                    <input type="radio" name="options" value="1" checked> Above
+                                    <input type="radio" id="radioAbove" name="options" value="1"> Above
                                 </label>
                                 <label class="btn btn-primary">
-                                    <input type="radio" name="options" value="2"> Below
+                                    <input type="radio" id="radioBelow" name="options" value="2"> Below
+                                </label>
+                                <label class="btn btn-primary">
+                                    <input type="radio" name="options" value="3"> Auto
                                 </label>
                             </div>
                         </div>
@@ -337,8 +406,8 @@
         <div class="container">
             <div class="row">
                 <div class="col-lg-12 text-center">
-                    <h2>Temperatures</h2>
-                    <hr class="star-light">
+                    <h2 id="h2Temps" data-toggle="modal" data-target="#temperatureModal">Temperatures</h2>
+                    <hr class="style-white">
                     <p class='events'>CLICK INDIVIDUAL TEMPS FOR HISTORY</P>
                 </div>
                 <div class="col-lg-12 text-center">
@@ -369,7 +438,7 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-body">
-                        <div style=" height: 750px; width: 950px;"><iframe id="tempChartIframe" height="100%" width='100%' frameborder='0'></iframe></div>
+                        <div style=" height: 750px; width: 950px;"><iframe id="tempChartIframe"></iframe></div>
                     </div>
                 </div>
             </div>
@@ -381,7 +450,7 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h2>Routine</h2>
-                    <hr class="star-primary">
+                    <hr class="style-dark">
                 </div>
                 <div class="col-lg-12 text-center">
                     <div class="container">
@@ -417,7 +486,7 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h2>About</h2>
-                    <hr class="star-light">
+                    <hr class="style-white">
                 </div>
             </div>
             <div class="row">
@@ -426,12 +495,12 @@
                     using spring-boot, and the backend was built using spring & Java.</p>
                 </div>
                 <div class="col-lg-4">
-                    <p>A huge thanks to the <a href src="http://pi4j.com">Pi4J</a> library for making Java GPIO on the Raspberry Pi a possibility
-                    as well as <a href src="https://spring.io">spring</a> for your ease of use, and integration. You have made one happy turtle.</p>
+                    <p>A huge thanks to the <a href="http://pi4j.com">Pi4J</a> library for making Java GPIO on the Raspberry Pi a possibility
+                    as well as <a href="https://spring.io">spring</a> for your ease of use, and integration. You have made one happy turtle.</p>
                 </div>
             </div>
             <div class="details">
-                <hr class="star-light">
+                <hr class="style-white">
                 <p>Donnie is housed in a 55 gallon aquarium with an additional self-made top to allow for his added basking area. He was adopted
                 in Aug. of 2015, and will hopefully live for a long time with the setup he has. The aquarium has a self-made filter that cycles
                 through 800 gallons per hour.</p>
@@ -445,7 +514,7 @@
                 <p>The water in the aquarium evaporates pretty regularly. In order to account for this, a water line with a solenoid on the end of it was
                 put into the sump. There is also a float switch within the sump that relays a signal to the backend application to turn on the solenoid when the water
                 is too low.</p>
-                <p>With all the automation that has been built into Donnie's aquarium there is very little maintenance that is required. Weekly manual tank cleanings
+                <p>With all the automation that has been built into Donnie's aquarium there is very little maintenance that is required. Bi-weekly manual tank cleanings
                 are necessary as well as a change of water and chemicals.</p>
             </div>
         </div>
@@ -457,10 +526,10 @@
             <div class="row">
                 <div class="col-lg-12 text-center">
                     <h2>Video</h2>
-                    <hr class="star-primary">
+                    <hr class="style-dark">
                 </div>
                 <div class="col-lg-12 text-center">
-                    <p>Youtube Video showing the outside of Donnie's aquarium.<br>If you have any questions for me, feel free to ask them within YouTube's comments section.</p>
+                    <p>Youtube Video showing the outside of Donnie's habitat.<br>If you have any questions for me, feel free to ask them within YouTube's comments section.</p>
                     <iframe width="600" height="400" src="https://www.youtube.com/embed/Kmkgl4OIgVA" frameborder="0" allowfullscreen></iframe>
                 </div>
             </div>
@@ -494,6 +563,8 @@
                                 <a href="https://www.linkedin.com/in/chad-d-haenens-124407b6" class="btn-social btn-outline"><i class="fa fa-fw fa-linkedin"></i></a>
                             </li>-->
                         </ul>
+                        <br>
+                        <a href="https://www.uvu.edu/cs/"><img th:src="@{/images/wolverine.png}" src="../static/images/wolverine.png"/></a>
                     </div>
                     <div class="footer-col col-md-4">
                         <h3>About Chad</h3>
@@ -521,7 +592,6 @@
     </div>
 
     <!-- plugin JavaScript -->
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
     <script th:src="@{/js/classie.js}" src="../static/js/classie.js"></script>
     <script th:src="@{/js/cbpAnimatedHeader.js}" src="../static/js/cbpAnimatedHeader.js"></script>
 
