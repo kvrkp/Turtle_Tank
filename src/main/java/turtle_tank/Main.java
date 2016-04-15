@@ -194,8 +194,6 @@ public class Main {
                 else if(temperature.getWater() < temperature.getTooHotWater() && GPIO.waterHeat.getState() == HIGH) GPIO.waterHeat.low();
             }
 
-            /* FEEDER FA-COOKIN BROKEN!
-
             // feed turtle 5 mins after sunrise,
             if(hour == breakfastHour && minute == breakfastMinute && second == 0) {
                 FeederController.feederToggle("");
@@ -207,8 +205,6 @@ public class Main {
                     FeederController.feederToggle("");
                 }
             }
-
-            */
 
             // check every 5 mins to make sure lights on during daytime
             if(minute % 5 == 0 && second == 0 && !SunRSDB.getNighttimeBool() && GPIO.mainLight.isHigh()) { GPIO.mainLight.low(); }

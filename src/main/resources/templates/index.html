@@ -87,7 +87,7 @@
                 });
             });
             $('#feeder').val("Disabled").popover({title: "Feeder Disabled",content: "Under construction",trigger: "hover",placement: "bottom"});
-            /*$("#feeder").click(function(){
+            $("#feeder").click(function(){
                 $.get("/feederToggle",{password: sessionStorage.getItem('password')}, function(data){
                     switch(data) {
                         case "Disabled":{$('#feeder').val(data).popover({title: "Donnie Is Sleeping",content: "No late night snacks allowed.",trigger: "hover",placement: "bottom"});break;}
@@ -101,34 +101,34 @@
                         default:{$('#feeder').popover({title:"Feeder Disabled",content: data,trigger:"hover",placement:"bottom"});}
                     }
                 });
-            });*/
+            });
 
             <!-- set relay toggle status on load **update every 30 secs** -->
             $.get("/relayStatus", {name: "mainLight"}, function(data){$('#mainLight').val(data)});
             $.get("/relayStatus", {name: "uvbLight"}, function(data){$('#uvbLight').val(data)});
             $.get("/relayStatus", {name: "heatLight"}, function(data){$('#heatLight').val(data)});
             $.get("/relayStatus", {name: "bubbles"}, function(data){$('#bubbles').val(data)});
-            /*$.get("/feederStatus", function(data){
+            $.get("/feederStatus", function(data){
                 switch(data) {
                     case "Disabled":{$('#feeder').val(data).popover({title: "Donnie Is Sleeping",content: "No late night snacks allowed.",trigger: "hover",placement: "bottom"});break;}
                     case "OverFed":{$('#feeder').val(data).popover({title:"Overfed",content:"Donnie has hit his daily limit.",trigger:"hover",placement:"bottom"});break;}
                     case "Feed": {$('#feeder').val(data).popover("destroy");break;}
                     default:{$('#feeder').val("Disabled").popover({title:"Feeder Disabled",content: data,trigger:"hover",placement:"bottom"});}
                 }
-            });*/
+            });
             setInterval(function() {
                 $.get("/relayStatus", {name: "mainLight"}, function(data){$('#mainLight').val(data)});
                 $.get("/relayStatus", {name: "uvbLight"}, function(data){$('#uvbLight').val(data)});
                 $.get("/relayStatus", {name: "heatLight"}, function(data){$('#heatLight').val(data)});
                 $.get("/relayStatus", {name: "bubbles"}, function(data){$('#bubbles').val(data)});
-                /*$.get("/feederStatus", function(data){
+                $.get("/feederStatus", function(data){
                     switch(data) {
                         case "Disabled":{$('#feeder').val(data).popover({title: "Donnie Is Sleeping",content: "No late night snacks allowed.",trigger: "hover",placement: "bottom"});break;}
                         case "OverFed":{$('#feeder').val(data).popover({title:"Overfed",content:"Donnie has hit his daily limit.",trigger:"hover",placement:"bottom"});break;}
                         case "Feed": {$('#feeder').val(data).popover("destroy");break;}
                         default:{$('#feeder').val("Disabled").popover({title:"Feeder Disabled",content: data,trigger:"hover",placement:"bottom"});}
                     }
-                });*/
+                });
             }, 30000);
 
             <!-- temps on mouseover css -->
