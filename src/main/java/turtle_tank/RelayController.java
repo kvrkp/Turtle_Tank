@@ -135,12 +135,12 @@ public class RelayController {
             case "waterHeat ":
                 status = (GPIO.waterHeat.isHigh()) ? "Off" : "On";
                 break;
-            case "feeder ":
-                status = (GPIO.feeder.isHigh()) ? "Off" : "On";
-                break;
-            case "waterSwitch":
-                status = (GPIO.waterSwitch.isHigh()) ? "Off" : "On";
-                break;
+//            case "feeder ":
+//                status = (GPIO.feeder.isHigh()) ? "Off" : "On";
+//                break;
+//            case "waterSwitch":
+//                status = (GPIO.waterSwitch.isHigh()) ? "Off" : "On";
+//                break;
             default: status = "Fail";
         }
         return status;

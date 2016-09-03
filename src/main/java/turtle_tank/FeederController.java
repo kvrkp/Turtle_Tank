@@ -31,10 +31,10 @@ public class FeederController {
                     System.err.println("Twitter Feed Error: " + e.getMessage());
                 }
 
-                GPIO.motor.setStepsPerRevolution(2088);
+                GPIO.motor.setStepsPerRevolution(2048);
                 GPIO.motor.setStepSequence(GPIO.sequence);
                 GPIO.motor.setStepInterval(1);
-                GPIO.motor.rotate(-2);                              // one full rotation
+                GPIO.motor.rotate(1);                              // one full rotation
                 Thread.sleep(7200000);                              // timeout for 2 hrs
             } catch (InterruptedException e) {
                 System.err.println("Feeder Thread Interrupted");
@@ -49,10 +49,10 @@ public class FeederController {
         String status;
 
         if(password.equals(GodModeController.getThePassword())) {                   // check to see if passwords match, and enable godMode
-            GPIO.motor.setStepsPerRevolution(2088);
+            GPIO.motor.setStepsPerRevolution(2048);
             GPIO.motor.setStepSequence(GPIO.sequence);
             GPIO.motor.setStepInterval(1);
-            GPIO.motor.rotate(-2);
+            GPIO.motor.rotate(1);
             status = "Feeding";
         } else if(SunRSDB.getNighttimeBool()) status = "Disabled";                  // check to see if it is night time
         else if (overFed()) status = "OverFed";                                     // check to see if overfed

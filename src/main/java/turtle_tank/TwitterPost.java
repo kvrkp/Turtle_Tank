@@ -3,7 +3,6 @@ package turtle_tank;
 import twitter4j.Twitter;
 import twitter4j.TwitterException;
 import twitter4j.TwitterFactory;
-
 import java.util.HashSet;
 import java.util.Random;
 import java.util.Set;
@@ -22,7 +21,8 @@ public class TwitterPost {
                                                 "You've got to tell me this turtle pellet #Recipe, it's the best.",
                                                 "#Glorious day! My kind of #FoodPorn Thank you.",
                                                 "Turtle in a #HalfShell, FEED ME NOW.",
-                                                "All day I dream about pellets. Thanks."};
+                                                "All day I dream about pellets. Thanks.",
+                                                "I'm not fat... I just have a big shell."};
 
     private static volatile String[] hashTag = {"#IoT", "#Turtle", "#RedEaredSlider", "#Donnie", "#RaspberryPi",
                                                 "#Automation", "#Java", "#Pi4j", "#Spring", "goo.gl/U1kYa7",
@@ -57,5 +57,17 @@ public class TwitterPost {
 
         if (snacksCount == (snacks.length - 1)) snacksCount = 0;
         else snacksCount++;
+    }
+
+    static public void notifyWaterActive(int _waterSwitchCount) throws TwitterException {
+        String directMessage = "Donnie's water switch activated: " + _waterSwitchCount + " times today.";
+        String twitterName = "chaderick9";
+        twitter.sendDirectMessage(twitterName, directMessage);
+    }
+
+    static public void notifyWaterDetected() throws TwitterException {
+        String directMessage = "Water has been detected on the floor! Recommend checking Donnie's status!";
+        String twitterName = "chaderick9";
+        twitter.sendDirectMessage(twitterName, directMessage);
     }
 }
