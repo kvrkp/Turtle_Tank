@@ -61,13 +61,9 @@ public class Main {
             @Override
             public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
                 if(event.getState() == HIGH) {      // if button clicked toggle lights
-                    GPIO.mainLight.high();
-                    GPIO.uvbLight.high();
-                    manualOverride = true;
-                } else {
-                    GPIO.mainLight.low();
-                    GPIO.uvbLight.low();
-                    manualOverride = false;
+                    GPIO.mainLight.toggle();
+                    GPIO.uvbLight.toggle();
+                    manualOverride = (!manualOverride);
                 }
             }
         });
