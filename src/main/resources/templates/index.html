@@ -86,7 +86,6 @@
                     }
                 });
             });
-            $('#feeder').val("Disabled").popover({title: "Feeder Disabled",content: "Under construction",trigger: "hover",placement: "bottom"});
             $("#feeder").click(function(){
                 $.get("/feederToggle",{password: sessionStorage.getItem('password')}, function(data){
                     switch(data) {
@@ -240,12 +239,12 @@
                         break;
                     case '2':
                         $('#cams').html("<iframe src='http://ipcamlive.com/player/player.php?alias=turtletankwater&autoplay=1&mute=0' allowfullscreen frameborder='0'></iframe>");
-                        sessionStorage.setItem("auto", false);
+                        sessionStorage.setItem("auto", true);
                         sessionStorage.setItem("camStatus", "below");
                         break;
-                    case '3':
-                        sessionStorage.setItem("auto", true);
-                        sessionStorage.setItem("camStatus", "auto");
+//                    case '3':
+//                        sessionStorage.setItem("auto", true);
+//                        sessionStorage.setItem("camStatus", "auto");
                 }
             });
 
@@ -348,8 +347,8 @@
                     <h2>Live Feed</h2>
                     <hr class="style-dark">
                     <!--donnies location-->
-                    <div id="donnieslocation"></div>
-                    <br>
+                    <!--<div id="donnieslocation"></div>-->
+                    <!--<br>-->
                     <!-- twitter feed -->
                     <a href="https://twitter.com/donnietheturtle" class="twitter-follow-button" data-show-count="false" data-size="large" data-dnt="true">Follow @donnietheturtle</a>
                     <!-- live camera -->
@@ -366,9 +365,9 @@
                                 <label class="btn btn-primary">
                                     <input type="radio" id="radioBelow" name="options" value="2"> Below
                                 </label>
-                                <label class="btn btn-primary">
-                                    <input type="radio" name="options" value="3"> Auto
-                                </label>
+                                <!--<label class="btn btn-primary">-->
+                                    <!--<input type="radio" name="options" value="3"> Auto-->
+                                <!--</label>-->
                             </div>
                         </div>
                     </div>
@@ -513,7 +512,8 @@
                 If he doesn't receive food throughout the day then he receives more at dinner time.</p>
                 <p>The water in the aquarium evaporates pretty regularly. In order to account for this, a water line with a solenoid on the end of it was
                 put into the sump. There is also a float switch within the sump that relays a signal to the backend application to turn on the solenoid when the water
-                is too low.</p>
+                is too low. Has Donnie's tank ever flooded you ask? Funny thing-- about 4 different times... However, I now have a switch that detects if water is on the
+                floor and I receive an immediate alert through Twitter. It also shuts down the water line with the solenoid until I can view things in person if I am away.</p>
                 <p>With all the automation that has been built into Donnie's aquarium there is very little maintenance that is required. Bi-weekly manual tank cleanings
                 are necessary as well as a change of water and chemicals.</p>
             </div>
